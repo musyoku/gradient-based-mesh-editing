@@ -1,0 +1,25 @@
+#pragma once
+void cpp_forward_face_index_map(
+    float* faces,
+    int* face_index_map,
+    float* depth_map,
+    int* silhouette_image,
+    int batch_size,
+    int num_faces,
+    int image_width,
+    int Fimage_height);
+
+void cpp_backward_silhouette(
+    int* faces,
+    float* face_vertices,
+    float* vertices,
+    int* face_index_map,
+    int* pixel_map,
+    float* grad_vertices,
+    float* grad_silhouette,
+    float* debug_grad_map,
+    int batch_size,
+    int num_faces,
+    int num_vertices,
+    int image_width,
+    int image_height);

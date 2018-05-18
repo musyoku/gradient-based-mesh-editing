@@ -1,0 +1,21 @@
+# ignore all
+*
+
+# allow any
+!*/
+!*.js
+!*.json
+!*.py
+!*.pyx
+!*.h
+!*.cpp
+!*.md
+!.gitignore
+!python/objects/*/*
+
+# ignore
+js/node_modules
+js/.next
+js/package-lock.json
+.vscode
+build
