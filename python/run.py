@@ -12,24 +12,19 @@ def main():
     vertices_batch = vertices[None, ...]
     faces_batch = faces[None, ...]
 
-    silhouette_size = (128, 128)
+    silhouette_size = (256, 256)
 
     if args.use_browser:
         # ブラウザのビューワを起動
         # nodeのサーバーをあらかじめ起動しておかないと繋がらないので注意
-        browser = gm.browser.Silhouette(8080,
-                                         np.ascontiguousarray(
-                                             vertices_batch[0]),
-                                         np.ascontiguousarray(faces_batch[0]),
-                                         silhouette_size)
+        browser = gm.browser.Silhouette(
+            8080, np.ascontiguousarray(vertices_batch[0]),
+            np.ascontiguousarray(faces_batch[0]), silhouette_size)
 
     # オブジェクトを適当に回転させる
     angle_x = np.random.randint(-180, 180)
     angle_y = np.random.randint(-180, 180)
     angle_z = np.random.randint(-180, 180)
-    angle_x = -65
-    angle_y = -23
-    angle_z = -93
     vertices_batch = gm.vertices.rotate_x(vertices_batch, angle_x)
     vertices_batch = gm.vertices.rotate_y(vertices_batch, angle_y)
     vertices_batch = gm.vertices.rotate_z(vertices_batch, angle_z)
@@ -41,7 +36,7 @@ def main():
 
         # 透視投影
         perspective_vertices_batch = gm.vertices.project_perspective(
-            perspective_vertices_batch, viewing_angle=30, z_max=5, z_min=0)
+            perspective_vertices_batch, viewing_angle=45, z_max=5, z_min=0)
 
         #################
         face_vertices_batch = gm.vertices.convert_to_face_representation(
@@ -90,7 +85,6 @@ def main():
         grad_image[grad_image < 0] = 64
         #################
 
-
         # print(faces_batch.size)
         # print(face_vertices_batch.size)
         # print(perspective_vertices_batch.size)
@@ -106,7 +100,8 @@ def main():
             browser.update_top_left_image(np.uint8(grad_image))
             browser.update_bottom_left_image(np.uint8(debug_grad_map[0]))
             browser.update_top_right_image(depth_map_image)
-            browser.update_bottom_right_image(np.uint8(target_silhouette_batch[0]))
+            browser.update_bottom_right_image(
+                np.uint8(target_silhouette_batch[0]))
             browser.update_object(np.ascontiguousarray(vertices_batch[0]))
 
 

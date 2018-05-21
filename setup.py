@@ -25,4 +25,4 @@ setup(
 filenames = os.listdir(".")
 for filename in filenames:
     if filename.endswith(".so"):
-        shutil.move(filename, os.path.join("python/neural_mesh_renderer/rasterizer", filename))
+        shutil.move(filename, os.path.join("python/gradient_based_editing/rasterizer", filename))

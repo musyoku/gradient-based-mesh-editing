@@ -84,7 +84,6 @@ void cpp_forward_face_index_map(
                     // https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/visibility-problem-depth-buffer-depth-interpolation
                     float z_face = 1.0 / (lambda_1 / zf_1 + lambda_2 / zf_2 + lambda_3 / zf_3);
 
-                    // cout << "x = " << xi << ", y = " << yi << ", l1 = " << lambda_1 << ", l2 = " << lambda_2 << ", l3 = " << lambda_3 << ", z_face = " << z_face << endl;
                     if (z_face < 0.0 || z_face > 1.0) {
                         continue;
                     }
@@ -156,9 +155,15 @@ void compute_grad_y(
             int yi_s_start = 0;
             int yi_s_end = image_height - 1; // 実際にはここに到達する前に辺に当たるはず
             int yi_s_edge = yi_s_start;
-            bool edge_found = false;
+            // 最初から面の内部の場合はスキップ
+            int map_index = target_batch_index * image_width * image_height + yi_s_start * image_width + xi_p;
+            int face_index = face_index_map[map_index];
+            if (face_index == target_face_index) {
+                continue;
+            }
             // 外側の全ての画素から勾配を求める
             {
+                bool edge_found = false;
                 int pixel_value_inside = 0;
                 for (int yi_s = yi_s_start; yi_s <= yi_s_end; yi_s++) {
                     int map_index = target_batch_index * image_width * image_height + yi_s * image_width + xi_p;
@@ -229,7 +234,7 @@ void compute_grad_y(
                     int map_index_s = target_batch_index * image_width * image_height + yi_s * image_width + xi_p;
                     int pixel_value_inside = pixel_map[map_index_s];
                     float delta_pj = grad_silhouette[map_index_s];
-                    if(delta_pj == 0){
+                    if (delta_pj == 0) {
                         continue;
                     }
                     // 面の上側（頂点を下に動かしていって走査点が辺に当たる場合）
@@ -296,9 +301,15 @@ void compute_grad_y(
             int yi_s_start = image_height - 1;
             int yi_s_end = 0;
             int yi_s_edge = yi_s_start;
-            bool edge_found = false;
+            // 最初から面の内部の場合はスキップ
+            int map_index = target_batch_index * image_width * image_height + yi_s_start * image_width + xi_p;
+            int face_index = face_index_map[map_index];
+            if (face_index == target_face_index) {
+                continue;
+            }
             // 外側の全ての画素から勾配を求める
             {
+                bool edge_found = false;
                 int pixel_value_inside = 0;
                 for (int yi_s = yi_s_start; yi_s >= yi_s_end; yi_s--) {
                     int map_index = target_batch_index * image_width * image_height + yi_s * image_width + xi_p;
@@ -487,8 +498,15 @@ void compute_grad_x(
             int si_x_start = 0;
             int si_x_end = image_width - 1; // 実際にはここに到達する前に辺に当たるはず
             int xi_s_edge = si_x_start;
+            // 最初から面の内部の場合はスキップ
+            int map_index = target_batch_index * image_width * image_height + yi_p * image_width + si_x_start;
+            int face_index = face_index_map[map_index];
+            if (face_index == target_face_index) {
+                continue;
+            }
             // 外側の全ての画素から勾配を求める
             {
+                bool edge_found = false;
                 int pixel_value_inside = 0;
                 for (int xi_s = si_x_start; xi_s <= si_x_end; xi_s++) {
                     int map_index = target_batch_index * image_width * image_height + yi_p * image_width + xi_s;
@@ -496,8 +514,12 @@ void compute_grad_x(
                     if (face_index == target_face_index) {
                         xi_s_edge = xi_s;
                         pixel_value_inside = pixel_map[map_index];
+                        edge_found = true;
                         break;
                     }
+                }
+                if (edge_found == false) {
+                    continue;
                 }
                 for (int xi_s = si_x_start; xi_s < xi_s_edge; xi_s++) {
                     int map_index_s = target_batch_index * image_width * image_height + yi_p * image_width + xi_s;
@@ -620,8 +642,15 @@ void compute_grad_x(
             int si_x_start = image_width - 1;
             int si_x_end = 0;
             int xi_s_edge = si_x_start;
+            // 最初から面の内部の場合はスキップ
+            int map_index = target_batch_index * image_width * image_height + yi_p * image_width + si_x_start;
+            int face_index = face_index_map[map_index];
+            if (face_index == target_face_index) {
+                continue;
+            }
             // 外側の全ての画素から勾配を求める
             {
+                bool edge_found = false;
                 int pixel_value_inside = 0;
                 for (int xi_s = si_x_start; xi_s >= si_x_end; xi_s--) {
                     int map_index_s = target_batch_index * image_width * image_height + yi_p * image_width + xi_s;
@@ -629,8 +658,12 @@ void compute_grad_x(
                     if (face_index == target_face_index) {
                         xi_s_edge = xi_s;
                         pixel_value_inside = pixel_map[map_index_s];
+                        edge_found = true;
                         break;
                     }
+                }
+                if (edge_found == false) {
+                    continue;
                 }
                 if (xi_s_edge < si_x_start) {
                     for (int xi_s = si_x_start; xi_s > xi_s_edge; xi_s--) {
