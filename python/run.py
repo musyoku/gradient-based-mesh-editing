@@ -1,12 +1,12 @@
 import os, sys, argparse
 import math
 import numpy as np
-import neural_mesh_renderer as nmr
+import gradient_based_editing as gm
 
 
 def main():
     # オブジェクトの読み込み
-    vertices, faces = nmr.objects.load("objects/teapot.obj")
+    vertices, faces = gm.objects.load("objects/teapot.obj")
 
     # ミニバッチ化
     vertices_batch = vertices[None, ...]
@@ -17,7 +17,7 @@ def main():
     if args.use_browser:
         # ブラウザのビューワを起動
         # nodeのサーバーをあらかじめ起動しておかないと繋がらないので注意
-        browser = nmr.browser.Silhouette(8080,
+        browser = gm.browser.Silhouette(8080,
                                          np.ascontiguousarray(
                                              vertices_batch[0]),
                                          np.ascontiguousarray(faces_batch[0]),
@@ -30,21 +30,21 @@ def main():
     angle_x = -65
     angle_y = -23
     angle_z = -93
-    vertices_batch = nmr.vertices.rotate_x(vertices_batch, angle_x)
-    vertices_batch = nmr.vertices.rotate_y(vertices_batch, angle_y)
-    vertices_batch = nmr.vertices.rotate_z(vertices_batch, angle_z)
+    vertices_batch = gm.vertices.rotate_x(vertices_batch, angle_x)
+    vertices_batch = gm.vertices.rotate_y(vertices_batch, angle_y)
+    vertices_batch = gm.vertices.rotate_z(vertices_batch, angle_z)
 
     for _ in range(10000):
         # カメラ座標系に変換
-        perspective_vertices_batch = nmr.vertices.transform_to_camera_coordinate_system(
+        perspective_vertices_batch = gm.vertices.transform_to_camera_coordinate_system(
             vertices_batch, distance_from_object=2, angle_x=0, angle_y=0)
 
         # 透視投影
-        perspective_vertices_batch = nmr.vertices.project_perspective(
+        perspective_vertices_batch = gm.vertices.project_perspective(
             perspective_vertices_batch, viewing_angle=30, z_max=5, z_min=0)
 
         #################
-        face_vertices_batch = nmr.vertices.convert_to_face_representation(
+        face_vertices_batch = gm.vertices.convert_to_face_representation(
             perspective_vertices_batch, faces_batch)
         # print(face_vertices_batch.shape)
         batch_size = face_vertices_batch.shape[0]
@@ -54,7 +54,7 @@ def main():
             (batch_size, ) + silhouette_size, dtype=np.float32)
         object_silhouette_batch = np.zeros(
             (batch_size, ) + silhouette_size, dtype=np.int32)
-        nmr.rasterizer.forward_face_index_map_cpu(
+        gm.rasterizer.forward_face_index_map_cpu(
             face_vertices_batch, face_index_map_batch, depth_map,
             object_silhouette_batch)
         depth_map_image = np.ascontiguousarray(
@@ -75,7 +75,7 @@ def main():
 
         debug_grad_map = np.zeros_like(
             object_silhouette_batch, dtype=np.float32)
-        nmr.rasterizer.backward_silhouette_cpu(
+        gm.rasterizer.backward_silhouette_cpu(
             faces_batch, face_vertices_batch, perspective_vertices_batch,
             face_index_map_batch, object_silhouette_batch, grad_vertices_batch,
             grad_silhouette_batch, debug_grad_map)
