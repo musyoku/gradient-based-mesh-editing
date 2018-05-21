@@ -1,8 +1,8 @@
-# Work in Progress :construction:
+# :construction: Work in Progress :construction:
 
 ## Gradient-based 3D Mesh Editing
 
-["Neural 3D Mesh Renderer"](https://arxiv.org/abs/1711.07566)で提案されたGradient-based mesh editingのC++/CUDA実装です。
+[Neural 3D Mesh Renderer](https://arxiv.org/abs/1711.07566)で提案されたGradient-based mesh editingのC++/CUDA実装です。
 
 CPU・GPU両方で動きます。
 

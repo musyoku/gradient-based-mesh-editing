@@ -11,9 +11,9 @@ float to_projected_coordinate(int p, int size)
 }
 
 // [-1, 1] -> [0, size - 1]
-float to_image_coordinate(float p, int size)
+int to_image_coordinate(float p, int size)
 {
-    return std::min(std::max(((p + 1.0f) * 0.5f * (size - 1)), 0.0f), (float)(size - 1));
+    return std::min(std::max((int)std::round((p + 1.0f) * 0.5f * (size - 1)), 0), size - 1);
 }
 
 // 各画素ごとに最前面を特定する
@@ -122,15 +122,15 @@ void compute_grad_y(
     float* grad_silhouette,
     float* debug_grad_map)
 {
-    // 画像の座標系に変換
+    // 画像座標系に変換
     // 左上が原点で右下が(image_width, image_height)になる
     // 画像配列に合わせるためそのような座標系になる
-    float xi_a = to_image_coordinate(xf_a, image_width);
-    float xi_b = to_image_coordinate(xf_b, image_width);
-    float xi_c = to_image_coordinate(xf_c, image_width);
-    float yi_a = (image_height - 1) - to_image_coordinate(yf_a, image_height);
-    float yi_b = (image_height - 1) - to_image_coordinate(yf_b, image_height);
-    float yi_c = (image_height - 1) - to_image_coordinate(yf_c, image_height);
+    int xi_a = to_image_coordinate(xf_a, image_width);
+    int xi_b = to_image_coordinate(xf_b, image_width);
+    int xi_c = to_image_coordinate(xf_c, image_width);
+    int yi_a = (image_height - 1) - to_image_coordinate(yf_a, image_height);
+    int yi_b = (image_height - 1) - to_image_coordinate(yf_b, image_height);
+    int yi_c = (image_height - 1) - to_image_coordinate(yf_c, image_height);
 
     if (xi_a == xi_b) {
         return;
@@ -144,8 +144,8 @@ void compute_grad_y(
     int scan_direction = (xi_a < xi_b) ? bottom_to_top : top_to_bottom;
 
     // 辺に沿ってx軸を走査
-    int xi_p_start = std::max(std::min((int)std::round(std::min(xi_a, xi_b)), image_width - 1), 0);
-    int xi_p_end = std::min(std::max((int)std::round(std::max(xi_a, xi_b)), 0), image_width - 1);
+    int xi_p_start = std::min(xi_a, xi_b);
+    int xi_p_end = std::max(xi_a, xi_b);
     // 辺上でx座標がpi_xの点を求める
     // 論文の図の点I_ijに相当（ここでは交点と呼ぶ）
     for (int xi_p = xi_p_start; xi_p <= xi_p_end; xi_p++) {
@@ -179,6 +179,9 @@ void compute_grad_y(
                     // 走査点と面の輝度値の差
                     float delta_ij = pixel_value_inside - pixel_value_outside;
                     float delta_pj = grad_silhouette[map_index_s];
+                    if (delta_pj == 0) {
+                        continue;
+                    }
                     // 頂点の実際の移動量を求める
                     // スキャンライン上の移動距離ではない
                     // 相似な三角形なのでx方向の比率から求まる
@@ -226,6 +229,9 @@ void compute_grad_y(
                     int map_index_s = target_batch_index * image_width * image_height + yi_s * image_width + xi_p;
                     int pixel_value_inside = pixel_map[map_index_s];
                     float delta_pj = grad_silhouette[map_index_s];
+                    if(delta_pj == 0){
+                        continue;
+                    }
                     // 面の上側（頂点を下に動かしていって走査点が辺に当たる場合）
                     {
                         float delta_ij = pixel_value_outside - pixel_value_inside;
@@ -312,7 +318,9 @@ void compute_grad_y(
                     int pixel_value_outside = pixel_map[map_index_s];
                     float delta_ij = pixel_value_inside - pixel_value_outside;
                     float delta_pj = grad_silhouette[map_index_s];
-
+                    if (delta_pj == 0) {
+                        continue;
+                    }
                     // 頂点Aについて
                     {
                         if (xi_p - xi_p_start > 0) {
@@ -357,6 +365,9 @@ void compute_grad_y(
                     int map_index_s = target_batch_index * image_width * image_height + yi_s * image_width + xi_p;
                     int pixel_value_inside = pixel_map[map_index_s];
                     float delta_pj = grad_silhouette[map_index_s];
+                    if (delta_pj == 0) {
+                        continue;
+                    }
                     // 面の上側（頂点を下に動かしていって走査点が辺に当たる場合）
                     {
                         float delta_ij = pixel_value_other_outside - pixel_value_inside;
@@ -441,15 +452,15 @@ void compute_grad_x(
     float* grad_silhouette,
     float* debug_grad_map)
 {
-    // 画像の座標系に変換
+    // 画像座標系に変換
     // 左上が原点で右下が(image_width, image_height)になる
     // 画像配列に合わせるためそのような座標系になる
-    float xi_a = to_image_coordinate(xf_a, image_width);
-    float xi_b = to_image_coordinate(xf_b, image_width);
-    float xi_c = to_image_coordinate(xf_c, image_width);
-    float yi_a = (image_height - 1) - to_image_coordinate(yf_a, image_height);
-    float yi_b = (image_height - 1) - to_image_coordinate(yf_b, image_height);
-    float yi_c = (image_height - 1) - to_image_coordinate(yf_c, image_height);
+    int xi_a = to_image_coordinate(xf_a, image_width);
+    int xi_b = to_image_coordinate(xf_b, image_width);
+    int xi_c = to_image_coordinate(xf_c, image_width);
+    int yi_a = (image_height - 1) - to_image_coordinate(yf_a, image_height);
+    int yi_b = (image_height - 1) - to_image_coordinate(yf_b, image_height);
+    int yi_c = (image_height - 1) - to_image_coordinate(yf_c, image_height);
 
     if (yi_a == yi_b) {
         return;
@@ -462,8 +473,8 @@ void compute_grad_x(
     int right_to_left = -1;
     int scan_direction = (yi_a < yi_b) ? left_to_right : right_to_left;
 
-    int yi_p_start = std::max(std::min((int)std::round(std::min(yi_a, yi_b)), image_height - 1), 0);
-    int yi_p_end = std::min(std::max((int)std::round(std::max(yi_a, yi_b)), 0), image_height - 1);
+    int yi_p_start = std::min(yi_a, yi_b);
+    int yi_p_end = std::max(yi_a, yi_b);
 
     // 辺に沿ってy軸を走査
     // 辺上でy座標がyi_pの点を求める
@@ -764,8 +775,44 @@ void compute_grad(
     float* grad_silhouette,
     float* debug_grad_map)
 {
-    compute_grad_x(xf_a, yf_a, xf_b, yf_b, xf_c, yf_c, vertex_index_a, vertex_index_b, image_width, image_height, num_vertices, target_batch_index, target_face_index, face_index_map, pixel_map, grad_vertices, grad_silhouette, debug_grad_map);
-    compute_grad_y(xf_a, yf_a, xf_b, yf_b, xf_c, yf_c, vertex_index_a, vertex_index_b, image_width, image_height, num_vertices, target_batch_index, target_face_index, face_index_map, pixel_map, grad_vertices, grad_silhouette, debug_grad_map);
+    compute_grad_x(
+        xf_a,
+        yf_a,
+        xf_b,
+        yf_b,
+        xf_c,
+        yf_c,
+        vertex_index_a,
+        vertex_index_b,
+        image_width,
+        image_height,
+        num_vertices,
+        target_batch_index,
+        target_face_index,
+        face_index_map,
+        pixel_map,
+        grad_vertices,
+        grad_silhouette,
+        debug_grad_map);
+    compute_grad_y(
+        xf_a,
+        yf_a,
+        xf_b,
+        yf_b,
+        xf_c,
+        yf_c,
+        vertex_index_a,
+        vertex_index_b,
+        image_width,
+        image_height,
+        num_vertices,
+        target_batch_index,
+        target_face_index,
+        face_index_map,
+        pixel_map,
+        grad_vertices,
+        grad_silhouette,
+        debug_grad_map);
 }
 
 // シルエットの誤差から各頂点の勾配を求める
@@ -809,9 +856,63 @@ void cpp_backward_silhouette(
             }
 
             // 3辺について
-            compute_grad(xf_1, yf_1, xf_2, yf_2, xf_3, yf_3, vertex_1_index, vertex_2_index, image_width, image_height, num_vertices, batch_index, face_index, face_index_map, pixel_map, grad_vertices, grad_silhouette, debug_grad_map);
-            compute_grad(xf_2, yf_2, xf_3, yf_3, xf_1, yf_1, vertex_2_index, vertex_3_index, image_width, image_height, num_vertices, batch_index, face_index, face_index_map, pixel_map, grad_vertices, grad_silhouette, debug_grad_map);
-            compute_grad(xf_3, yf_3, xf_1, yf_1, xf_2, yf_2, vertex_3_index, vertex_1_index, image_width, image_height, num_vertices, batch_index, face_index, face_index_map, pixel_map, grad_vertices, grad_silhouette, debug_grad_map);
+            compute_grad(
+                xf_1,
+                yf_1,
+                xf_2,
+                yf_2,
+                xf_3,
+                yf_3,
+                vertex_1_index,
+                vertex_2_index,
+                image_width,
+                image_height,
+                num_vertices,
+                batch_index,
+                face_index,
+                face_index_map,
+                pixel_map,
+                grad_vertices,
+                grad_silhouette,
+                debug_grad_map);
+            compute_grad(
+                xf_2,
+                yf_2,
+                xf_3,
+                yf_3,
+                xf_1,
+                yf_1,
+                vertex_2_index,
+                vertex_3_index,
+                image_width,
+                image_height,
+                num_vertices,
+                batch_index,
+                face_index,
+                face_index_map,
+                pixel_map,
+                grad_vertices,
+                grad_silhouette,
+                debug_grad_map);
+            compute_grad(
+                xf_3,
+                yf_3,
+                xf_1,
+                yf_1,
+                xf_2,
+                yf_2,
+                vertex_3_index,
+                vertex_1_index,
+                image_width,
+                image_height,
+                num_vertices,
+                batch_index,
+                face_index,
+                face_index_map,
+                pixel_map,
+                grad_vertices,
+                grad_silhouette,
+                debug_grad_map);
         }
     }
 }
