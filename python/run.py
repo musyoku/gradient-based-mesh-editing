@@ -84,7 +84,6 @@ def main():
         debug_grad_map /= np.amax(debug_grad_map)
         debug_grad_map *= 255
 
-        print(np.amin(vertices_batch), np.amax(vertices_batch), np.amin(grad_vertices_batch), np.amax(grad_vertices_batch))
         vertices_batch -= 0.0001 * grad_vertices_batch
         grad_image = np.copy(grad_silhouette_batch[0]) * 255
         grad_image[grad_image > 0] = 255
@@ -103,13 +102,13 @@ def main():
         # print(grad_silhouette_batch.size)
         # print(debug_grad_map.size)
 
-        browser.update_top_left_image(np.uint8(grad_image))
-        browser.update_bottom_left_image(np.uint8(debug_grad_map[0]))
-        browser.update_top_right_image(depth_map_image)
-        browser.update_bottom_right_image(np.uint8(target_silhouette_batch[0]))
-        browser.update_object(np.ascontiguousarray(vertices_batch[0]))
+        if args.use_browser:
+            browser.update_top_left_image(np.uint8(grad_image))
+            browser.update_bottom_left_image(np.uint8(debug_grad_map[0]))
+            browser.update_top_right_image(depth_map_image)
+            browser.update_bottom_right_image(np.uint8(target_silhouette_batch[0]))
+            browser.update_object(np.ascontiguousarray(vertices_batch[0]))
 
-        return
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
