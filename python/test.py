@@ -4,24 +4,11 @@ import numpy as np
 import gradient_based_editing as gm
 
 
-def main():
-    # オブジェクトの読み込み
-    vertices, faces = gm.objects.load("objects/teapot.obj")
-
-    # ミニバッチ化
-    vertices_batch = vertices[None, ...]
-    faces_batch = faces[None, ...]
-
-    silhouette_size = (256, 256)
-
-    if args.use_browser:
-        # ブラウザのビューワを起動
-        # nodeのサーバーをあらかじめ起動しておかないと繋がらないので注意
-        browser = gm.browser.Silhouette(
-            8080, np.ascontiguousarray(vertices_batch[0]),
-            np.ascontiguousarray(faces_batch[0]), silhouette_size)
-
-    for _ in range(10000):
+def run_test(vertices_batch, faces_batch, browser, silhouette_size):
+    browser.init_object(
+        np.ascontiguousarray(vertices_batch[0]),
+        np.ascontiguousarray(faces_batch[0]))
+    for _ in range(200):
         # カメラ座標系に変換
         perspective_vertices_batch = gm.vertices.transform_to_camera_coordinate_system(
             vertices_batch, distance_from_object=2, angle_x=0, angle_y=0)
@@ -30,7 +17,6 @@ def main():
         perspective_vertices_batch = gm.vertices.project_perspective(
             perspective_vertices_batch, viewing_angle=45, z_max=5, z_min=0)
 
-        #################
         face_vertices_batch = gm.vertices.convert_to_face_representation(
             perspective_vertices_batch, faces_batch)
         # print(face_vertices_batch.shape)
@@ -46,9 +32,7 @@ def main():
             object_silhouette_batch)
         depth_map_image = np.ascontiguousarray(
             (1.0 - depth_map[0]) * 255).astype(np.uint8)
-        #################
 
-        #################
         target_silhouette_batch = np.zeros_like(
             object_silhouette_batch, dtype=np.float32)
         target_silhouette_batch[:, 30:225, 30:225] = 255
@@ -75,30 +59,50 @@ def main():
         grad_image = np.copy(grad_silhouette_batch[0]) * 255
         grad_image[grad_image > 0] = 255
         grad_image[grad_image < 0] = 64
-        #################
 
-        # print(faces_batch.size)
-        # print(face_vertices_batch.size)
-        # print(perspective_vertices_batch.size)
+        browser.update_top_left_image(np.uint8(grad_image))
+        browser.update_bottom_left_image(np.uint8(debug_grad_map[0]))
+        browser.update_top_right_image(depth_map_image)
+        browser.update_bottom_right_image(np.uint8(target_silhouette_batch[0]))
+        browser.update_object(np.ascontiguousarray(vertices_batch[0]))
 
-        # print(face_index_map_batch.size)
-        # print(object_silhouette_batch.size)
 
-        # print(grad_vertices_batch.size)
-        # print(grad_silhouette_batch.size)
-        # print(debug_grad_map.size)
+def main():
+    # オブジェクトの読み込み
+    vertices, faces = gm.objects.load("objects/triangle.obj")
 
-        if args.use_browser:
-            browser.update_top_left_image(np.uint8(grad_image))
-            browser.update_bottom_left_image(np.uint8(debug_grad_map[0]))
-            browser.update_top_right_image(depth_map_image)
-            browser.update_bottom_right_image(
-                np.uint8(target_silhouette_batch[0]))
-            browser.update_object(np.ascontiguousarray(vertices_batch[0]))
+    # ミニバッチ化
+    original_vertices_batch = vertices[None, ...]
+    faces_batch = faces[None, ...]
+
+    silhouette_size = (256, 256)
+
+    # ブラウザのビューワを起動
+    # nodeのサーバーをあらかじめ起動しておかないと繋がらないので注意
+    browser = gm.browser.Silhouette(
+        8080, np.ascontiguousarray(original_vertices_batch[0]),
+        np.ascontiguousarray(faces_batch[0]), silhouette_size)
+
+    if True:
+        vertices_batch = np.copy(original_vertices_batch)
+        run_test(vertices_batch, faces_batch, browser, silhouette_size)
+
+        vertices_batch = gm.vertices.rotate_z(np.copy(original_vertices_batch), 90)
+        run_test(vertices_batch, faces_batch, browser, silhouette_size)
+
+        vertices_batch = gm.vertices.rotate_z(
+            np.copy(original_vertices_batch), 180)
+        run_test(vertices_batch, faces_batch, browser, silhouette_size)
+
+        vertices_batch = gm.vertices.rotate_z(
+            np.copy(original_vertices_batch), 270)
+        run_test(vertices_batch, faces_batch, browser, silhouette_size)
+    
+    if False:
+        vertices_batch = np.copy(original_vertices_batch)
+        vertices_batch += (1, 0, 0)
+        run_test(vertices_batch, faces_batch, browser, silhouette_size)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--use-browser", "-browser", action="store_true")
-    args = parser.parse_args()
     main()

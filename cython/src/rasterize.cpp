@@ -410,10 +410,10 @@ void compute_grad_y(
                             // 頂点の実際の移動量を求める
                             // スキャンライン上の移動距離ではない
                             // 相似な三角形なのでy方向の比率から求まる
-                            float moving_distance = (yi_s - yi_s_other_edge) / (float)(xi_p - xi_c) * (float)(xi_p_end - xi_p_start);
+                            float moving_distance = (yi_s - yi_s_other_edge) / (float)(xi_p - xi_c) * (float)(xi_p_end - xi_c);
                             if (moving_distance > 0) {
                                 float grad = (delta_pj * delta_ij >= 0) ? 0 : -delta_pj * delta_ij / moving_distance / 255.0f;
-                                // grad_vertices[target_batch_index * num_vertices * 3 + vertex_index_b * 3 + 1] += grad;
+                                grad_vertices[target_batch_index * num_vertices * 3 + vertex_index_b * 3 + 1] += grad;
                                 debug_grad_map[map_index_s] += grad;
                             }
                         }

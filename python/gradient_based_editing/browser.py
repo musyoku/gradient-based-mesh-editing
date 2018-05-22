@@ -5,7 +5,7 @@ import struct
 class Silhouette:
     def __init__(self, port, vertices, faces, image_size):
         self.base_url = "http://localhost:{}".format(port)
-        print(self.base_url)
+        print("Open {} in your browser".format(self.base_url))
         self.init_object(vertices, faces)
         self.init_image_area(image_size)
 
