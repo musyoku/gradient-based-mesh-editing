@@ -6,7 +6,7 @@ import gradient_based_editing as gm
 
 def main():
     # オブジェクトの読み込み
-    vertices, faces = gm.objects.load("objects/triangle.obj")
+    vertices, faces = gm.objects.load("objects/teapot.obj")
 
     # ミニバッチ化
     vertices_batch = vertices[None, ...]
@@ -20,14 +20,6 @@ def main():
         browser = gm.browser.Silhouette(
             8080, np.ascontiguousarray(vertices_batch[0]),
             np.ascontiguousarray(faces_batch[0]), silhouette_size)
-
-    # オブジェクトを適当に回転させる
-    angle_x = np.random.randint(-180, 180)
-    angle_y = np.random.randint(-180, 180)
-    angle_z = np.random.randint(-180, 180)
-    vertices_batch = gm.vertices.rotate_x(vertices_batch, angle_x)
-    vertices_batch = gm.vertices.rotate_y(vertices_batch, angle_y)
-    vertices_batch = gm.vertices.rotate_z(vertices_batch, angle_z)
 
     for _ in range(10000):
         # カメラ座標系に変換

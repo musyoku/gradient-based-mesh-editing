@@ -220,6 +220,7 @@ void compute_grad_y(
                 int pixel_value_outside = pixel_map[map_index_outside];
                 int yi_s_other_edge = image_height - 1;
                 int pixel_value_other_outside = 0;
+                bool edge_found = false;
                 // 反対側の辺の位置を特定する
                 for (int yi_s = yi_s_edge + 1; yi_s <= yi_s_end; yi_s++) {
                     int map_index = target_batch_index * image_width * image_height + yi_s * image_width + xi_p;
@@ -227,8 +228,12 @@ void compute_grad_y(
                     if (face_index != target_face_index) {
                         yi_s_other_edge = yi_s - 1;
                         pixel_value_other_outside = pixel_map[map_index];
+                        edge_found = true;
                         break;
                     }
+                }
+                if (edge_found == false) {
+                    continue;
                 }
                 for (int yi_s = yi_s_edge; yi_s <= yi_s_other_edge; yi_s++) {
                     int map_index_s = target_batch_index * image_width * image_height + yi_s * image_width + xi_p;
@@ -362,6 +367,7 @@ void compute_grad_y(
                 int pixel_value_outside = pixel_map[map_index_outside];
                 int yi_s_other_edge = 0;
                 int pixel_value_other_outside = 0;
+                bool edge_found = false;
                 // 反対側の辺の位置を特定する
                 for (int yi_s = yi_s_edge - 1; yi_s >= yi_s_end; yi_s--) {
                     int map_index = target_batch_index * image_width * image_height + yi_s * image_width + xi_p;
@@ -369,8 +375,12 @@ void compute_grad_y(
                     if (face_index != target_face_index) {
                         yi_s_other_edge = yi_s + 1;
                         pixel_value_other_outside = pixel_map[map_index];
+                        edge_found = true;
                         break;
                     }
+                }
+                if (edge_found == false) {
+                    continue;
                 }
                 for (int yi_s = yi_s_edge; yi_s >= yi_s_other_edge; yi_s--) {
                     int map_index_s = target_batch_index * image_width * image_height + yi_s * image_width + xi_p;
@@ -403,7 +413,7 @@ void compute_grad_y(
                             float moving_distance = (yi_s - yi_s_other_edge) / (float)(xi_p - xi_c) * (float)(xi_p_end - xi_p_start);
                             if (moving_distance > 0) {
                                 float grad = (delta_pj * delta_ij >= 0) ? 0 : -delta_pj * delta_ij / moving_distance / 255.0f;
-                                grad_vertices[target_batch_index * num_vertices * 3 + vertex_index_b * 3 + 1] += grad;
+                                // grad_vertices[target_batch_index * num_vertices * 3 + vertex_index_b * 3 + 1] += grad;
                                 debug_grad_map[map_index_s] += grad;
                             }
                         }
@@ -559,6 +569,7 @@ void compute_grad_x(
                 int pixel_value_outside = pixel_map[map_index_outside];
                 int xi_s_other_edge = image_width - 1;
                 int pixel_value_other_outside = 0;
+                bool edge_found = false;
                 // 反対側の辺の位置を特定する
                 for (int xi_s = xi_s_edge + 1; xi_s <= si_x_end; xi_s++) {
                     int map_index = target_batch_index * image_width * image_height + yi_p * image_width + xi_s;
@@ -566,8 +577,12 @@ void compute_grad_x(
                     if (face_index != target_face_index) {
                         xi_s_other_edge = xi_s - 1;
                         pixel_value_other_outside = pixel_map[map_index];
+                        edge_found = true;
                         break;
                     }
+                }
+                if (edge_found == false) {
+                    continue;
                 }
                 for (int xi_s = xi_s_edge; xi_s <= xi_s_other_edge; xi_s++) {
                     int map_index_s = target_batch_index * image_width * image_height + yi_p * image_width + xi_s;
@@ -700,6 +715,7 @@ void compute_grad_x(
                 int pixel_value_outside = pixel_map[map_index_outside];
                 int xi_s_other_edge = 0;
                 int pixel_value_other_outside = 0;
+                bool edge_found = false;
                 // 反対側の辺の位置を特定する
                 for (int xi_s = xi_s_edge - 1; xi_s >= si_x_end; xi_s--) {
                     int map_index = target_batch_index * image_width * image_height + yi_p * image_width + xi_s;
@@ -707,8 +723,12 @@ void compute_grad_x(
                     if (face_index != target_face_index) {
                         xi_s_other_edge = xi_s + 1;
                         pixel_value_other_outside = pixel_map[map_index];
+                        edge_found = true;
                         break;
                     }
+                }
+                if (edge_found == false) {
+                    continue;
                 }
                 for (int xi_s = xi_s_edge; xi_s >= xi_s_other_edge; xi_s--) {
                     int map_index_s = target_batch_index * image_width * image_height + yi_p * image_width + xi_s;
