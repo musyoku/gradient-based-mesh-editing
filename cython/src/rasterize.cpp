@@ -596,7 +596,7 @@ void compute_grad_x(
                         // スキャンライン上の移動距離ではない
                         // 相似な三角形なのでy方向の比率から求まる
                         if (yi_p - yi_p_start > 0) {
-                            float moving_distance = (xi_s - xi_s_edge) / (float)(yi_p - yi_p_start) * (float)(yi_p_end - yi_p_start);
+                            float moving_distance = (xi_s - xi_s_edge) / (float)(yi_p_end - yi_p) * (float)(yi_p_end - yi_p_start);
                             if (moving_distance > 0) {
                                 float delta_pj = grad_silhouette[target_batch_index * image_width * image_height + yi_p * image_width + xi_s];
                                 float grad = (delta_pj * delta_ij >= 0) ? 0 : delta_pj * delta_ij / moving_distance / 255.0f;
@@ -609,7 +609,7 @@ void compute_grad_x(
                         // スキャンライン上の移動距離ではない
                         // 相似な三角形なのでy方向の比率から求まる
                         if (yi_p_end - yi_p > 0) {
-                            float moving_distance = (xi_s - xi_s_edge) / (float)(yi_p_end - yi_p) * (float)(yi_p_end - yi_p_start);
+                            float moving_distance = (xi_s - xi_s_edge) / (float)(yi_p - yi_p_start) * (float)(yi_p_end - yi_p_start);
                             if (moving_distance > 0) {
                                 float delta_pj = grad_silhouette[target_batch_index * image_width * image_height + yi_p * image_width + xi_s];
                                 float grad = (delta_pj * delta_ij >= 0) ? 0 : delta_pj * delta_ij / moving_distance / 255.0f;

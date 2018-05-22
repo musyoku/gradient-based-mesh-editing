@@ -4,11 +4,15 @@ import numpy as np
 import gradient_based_editing as gm
 
 
-def run_test(vertices_batch, faces_batch, browser, silhouette_size):
+def run_test(vertices_batch,
+             faces_batch,
+             browser,
+             silhouette_size,
+             num_itr=200):
     browser.init_object(
         np.ascontiguousarray(vertices_batch[0]),
         np.ascontiguousarray(faces_batch[0]))
-    for _ in range(200):
+    for _ in range(num_itr):
         # カメラ座標系に変換
         perspective_vertices_batch = gm.vertices.transform_to_camera_coordinate_system(
             vertices_batch, distance_from_object=2, angle_x=0, angle_y=0)
@@ -87,7 +91,8 @@ def main():
         vertices_batch = np.copy(original_vertices_batch)
         run_test(vertices_batch, faces_batch, browser, silhouette_size)
 
-        vertices_batch = gm.vertices.rotate_z(np.copy(original_vertices_batch), 90)
+        vertices_batch = gm.vertices.rotate_z(
+            np.copy(original_vertices_batch), 90)
         run_test(vertices_batch, faces_batch, browser, silhouette_size)
 
         vertices_batch = gm.vertices.rotate_z(
@@ -97,7 +102,23 @@ def main():
         vertices_batch = gm.vertices.rotate_z(
             np.copy(original_vertices_batch), 270)
         run_test(vertices_batch, faces_batch, browser, silhouette_size)
-    
+
+        vertices_batch = gm.vertices.rotate_z(
+            np.copy(original_vertices_batch), 60)
+        run_test(vertices_batch, faces_batch, browser, silhouette_size, 400)
+
+        vertices_batch = gm.vertices.rotate_z(
+            np.copy(original_vertices_batch), 120)
+        run_test(vertices_batch, faces_batch, browser, silhouette_size, 400)
+
+        vertices_batch = gm.vertices.rotate_z(
+            np.copy(original_vertices_batch), 240)
+        run_test(vertices_batch, faces_batch, browser, silhouette_size, 400)
+
+        vertices_batch = gm.vertices.rotate_z(
+            np.copy(original_vertices_batch), 300)
+        run_test(vertices_batch, faces_batch, browser, silhouette_size, 400)
+
     if True:
         vertices_batch = np.copy(original_vertices_batch)
         vertices_batch += (1, 0, 0)

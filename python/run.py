@@ -6,7 +6,7 @@ import gradient_based_editing as gm
 
 def main():
     # オブジェクトの読み込み
-    vertices, faces = gm.objects.load("objects/triangle.obj")
+    vertices, faces = gm.objects.load("objects/teapot.obj")
 
     # ミニバッチ化
     vertices_batch = vertices[None, ...]
