@@ -98,7 +98,7 @@ def main():
             np.copy(original_vertices_batch), 270)
         run_test(vertices_batch, faces_batch, browser, silhouette_size)
     
-    if False:
+    if True:
         vertices_batch = np.copy(original_vertices_batch)
         vertices_batch += (1, 0, 0)
         run_test(vertices_batch, faces_batch, browser, silhouette_size)

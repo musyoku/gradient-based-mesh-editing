@@ -756,7 +756,7 @@ void compute_grad_x(
                             // 頂点の実際の移動量を求める
                             // スキャンライン上の移動距離ではない
                             // 相似な三角形なのでy方向の比率から求まる
-                            float moving_distance = (xi_s - xi_s_other_edge) / (float)(yi_p - yi_p_start) * (float)(yi_c - yi_p_start);
+                            float moving_distance = (xi_s - xi_s_other_edge) / (float)(yi_p - yi_c) * (float)(yi_c - yi_p_start);
                             if (moving_distance > 0) {
                                 float delta_pj = grad_silhouette[target_batch_index * image_width * image_height + yi_p * image_width + xi_s];
                                 float grad = (delta_pj * delta_ij >= 0) ? 0 : delta_pj * delta_ij / moving_distance / 255.0f;
