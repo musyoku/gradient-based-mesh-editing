@@ -131,9 +131,9 @@ void compute_grad_y(
     int yi_b = (image_height - 1) - to_image_coordinate(yf_b, image_height);
     int yi_c = (image_height - 1) - to_image_coordinate(yf_c, image_height);
 
-    if (xi_a == xi_b) {
-        return;
-    }
+    // if (xi_a == xi_b) {
+    //     return;
+    // }
 
     // y方向の走査がどの方向を向いていると辺に当たるか
     // 1:  画像の上から下に進む（yが増加する）方向に進んだ時に辺に当たる
@@ -413,7 +413,7 @@ void compute_grad_y(
                             float moving_distance = (yi_s - yi_s_other_edge) / (float)(xi_p - xi_c) * (float)(xi_p_end - xi_c);
                             if (moving_distance > 0) {
                                 float grad = (delta_pj * delta_ij >= 0) ? 0 : -delta_pj * delta_ij / moving_distance / 255.0f;
-                                grad_vertices[target_batch_index * num_vertices * 3 + vertex_index_b * 3 + 1] += grad;
+                                // grad_vertices[target_batch_index * num_vertices * 3 + vertex_index_b * 3 + 1] += grad;
                                 debug_grad_map[map_index_s] += grad;
                             }
                         }
@@ -483,9 +483,9 @@ void compute_grad_x(
     int yi_b = (image_height - 1) - to_image_coordinate(yf_b, image_height);
     int yi_c = (image_height - 1) - to_image_coordinate(yf_c, image_height);
 
-    if (yi_a == yi_b) {
-        return;
-    }
+    // if (yi_a == yi_b) {
+    //     return;
+    // }
 
     // x方向の走査がどの方向を向いていると辺に当たるか
     // 1:  画像の左から右に進む（xが増加する）方向に進んだ時に辺に当たる

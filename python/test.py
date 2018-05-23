@@ -6,6 +6,7 @@ import gradient_based_editing as gm
 
 def run_test(vertices_batch,
              faces_batch,
+             target_silhouette_batch,
              browser,
              silhouette_size,
              num_itr=200):
@@ -37,9 +38,6 @@ def run_test(vertices_batch,
         depth_map_image = np.ascontiguousarray(
             (1.0 - depth_map[0]) * 255).astype(np.uint8)
 
-        target_silhouette_batch = np.zeros_like(
-            object_silhouette_batch, dtype=np.float32)
-        target_silhouette_batch[:, 30:225, 30:225] = 255
         grad_vertices_batch = np.zeros_like(vertices_batch, dtype=np.float32)
         object_silhouette_batch = np.copy(
             (1.0 - depth_map) * 255, order="c").astype(np.int32)
@@ -59,7 +57,7 @@ def run_test(vertices_batch,
         debug_grad_map /= np.amax(debug_grad_map)
         debug_grad_map *= 255
 
-        vertices_batch -= 0.00005 * grad_vertices_batch
+        vertices_batch -= 0.0001 * grad_vertices_batch
         grad_image = np.copy(grad_silhouette_batch[0]) * 255
         grad_image[grad_image > 0] = 255
         grad_image[grad_image < 0] = 64
@@ -78,6 +76,7 @@ def main():
     # ミニバッチ化
     original_vertices_batch = vertices[None, ...]
     faces_batch = faces[None, ...]
+    batch_size = faces_batch.shape[0]
 
     silhouette_size = (256, 256)
 
@@ -87,42 +86,108 @@ def main():
         8080, np.ascontiguousarray(original_vertices_batch[0]),
         np.ascontiguousarray(faces_batch[0]), silhouette_size)
 
-    if True:
+    if False:
+        target_silhouette_batch = np.zeros(
+            (batch_size, ) + silhouette_size, dtype=np.float32)
+        target_silhouette_batch[:, 30:225, 30:225] = 255
+
         vertices_batch = np.copy(original_vertices_batch)
-        run_test(vertices_batch, faces_batch, browser, silhouette_size)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size)
 
         vertices_batch = gm.vertices.rotate_z(
             np.copy(original_vertices_batch), 90)
-        run_test(vertices_batch, faces_batch, browser, silhouette_size)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size)
 
         vertices_batch = gm.vertices.rotate_z(
             np.copy(original_vertices_batch), 180)
-        run_test(vertices_batch, faces_batch, browser, silhouette_size)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size)
 
         vertices_batch = gm.vertices.rotate_z(
             np.copy(original_vertices_batch), 270)
-        run_test(vertices_batch, faces_batch, browser, silhouette_size)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size)
 
         vertices_batch = gm.vertices.rotate_z(
             np.copy(original_vertices_batch), 60)
-        run_test(vertices_batch, faces_batch, browser, silhouette_size, 400)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size, 400)
 
         vertices_batch = gm.vertices.rotate_z(
             np.copy(original_vertices_batch), 120)
-        run_test(vertices_batch, faces_batch, browser, silhouette_size, 400)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size, 400)
 
         vertices_batch = gm.vertices.rotate_z(
             np.copy(original_vertices_batch), 240)
-        run_test(vertices_batch, faces_batch, browser, silhouette_size, 400)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size, 400)
 
         vertices_batch = gm.vertices.rotate_z(
             np.copy(original_vertices_batch), 300)
-        run_test(vertices_batch, faces_batch, browser, silhouette_size, 400)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size, 400)
 
     if True:
+        target_silhouette_batch = np.zeros(
+            (batch_size, ) + silhouette_size, dtype=np.float32)
+        target_silhouette_batch[:, 120:140, 40:200] = 255
+
         vertices_batch = np.copy(original_vertices_batch)
-        vertices_batch += (1, 0, 0)
-        run_test(vertices_batch, faces_batch, browser, silhouette_size)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size, 500)
+
+        # vertices_batch = gm.vertices.rotate_z(
+        #     np.copy(original_vertices_batch), 90)
+        # run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+        #          silhouette_size, 500)
+
+        # vertices_batch = gm.vertices.rotate_z(
+        #     np.copy(original_vertices_batch), 180)
+        # run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+        #          silhouette_size, 500)
+
+        vertices_batch = gm.vertices.rotate_z(
+            np.copy(original_vertices_batch), 270)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size, 500)
+
+        # vertices_batch = gm.vertices.rotate_z(
+        #     np.copy(original_vertices_batch), 60)
+        # run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+        #          silhouette_size, 500)
+
+        # vertices_batch = gm.vertices.rotate_z(
+        #     np.copy(original_vertices_batch), 120)
+        # run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+        #          silhouette_size, 500)
+
+        vertices_batch = gm.vertices.rotate_z(
+            np.copy(original_vertices_batch), 240)
+        # vertices_batch = np.asarray(
+        #     [[[-1.846143, 0.18859313, 0], [0.6484659, -0.3721265, 0.],
+        #       [1.2827933, 0.32970333, 0.], [0.1804606, -0.8931645, 0.]]],
+        #     dtype=vertices_batch.dtype)
+        run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+                 silhouette_size, 500)
+        print(vertices_batch)
+
+        # vertices_batch = gm.vertices.rotate_z(
+        #     np.copy(original_vertices_batch), 300)
+        # run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+        #          silhouette_size, 500)
+
+    # if True:
+    #     target_silhouette_batch = np.zeros(
+    #         (batch_size, ) + silhouette_size, dtype=np.float32)
+    #     target_silhouette_batch[:, 30:225, 30:225] = 255
+
+    #     vertices_batch = np.copy(original_vertices_batch)
+    #     vertices_batch += (1, 0, 0)
+    #     run_test(vertices_batch, faces_batch, target_silhouette_batch, browser,
+    #              silhouette_size)
 
 
 if __name__ == "__main__":

@@ -25,6 +25,9 @@ def main():
     angle_x = np.random.randint(-180, 180)
     angle_y = np.random.randint(-180, 180)
     angle_z = np.random.randint(-180, 180)
+    angle_x = -30
+    angle_y = -45
+    angle_z = 0
     vertices_batch = gm.vertices.rotate_x(vertices_batch, angle_x)
     vertices_batch = gm.vertices.rotate_y(vertices_batch, angle_y)
     vertices_batch = gm.vertices.rotate_z(vertices_batch, angle_z)
