@@ -6,7 +6,7 @@ import gradient_based_editing as gm
 
 def main():
     viewer = gm.viewer.Viewer()
-    viewer.go()
+    print(9)
 
 
 if __name__ == "__main__":
