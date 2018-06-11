@@ -17,12 +17,13 @@ Window::Window()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 #if __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    _window = glfwCreateWindow(1920, 800, "Gradient-based Mesh Editing", NULL, NULL);
+    _window = glfwCreateWindow(1, 1, "Gradient-based Mesh Editing", NULL, NULL);
     glfwMakeContextCurrent(_window);
-    glfwSwapInterval(1); // Enable vsync
+    glfwSwapInterval(1);
     gl3wInit();
 }
 Window::~Window()
@@ -35,9 +36,10 @@ Window::~Window()
 }
 void Window::_run()
 {
+    glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
     _shared_window = glfwCreateWindow(1920, 800, "Gradient-based Mesh Editing", NULL, _window);
+    glfwMakeContextCurrent(_shared_window);
     glm::vec4 bg_color = glm::vec4(61.0f / 255.0f, 57.0f / 255.0f, 90.0f / 255.0f, 1.00f);
-
     while (!!glfwWindowShouldClose(_shared_window) == false) {
         glfwPollEvents();
         int screen_width, screen_height;
