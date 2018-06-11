@@ -40,6 +40,16 @@ void Window::_run()
     _shared_window = glfwCreateWindow(1920, 800, "Gradient-based Mesh Editing", NULL, _window);
     glfwMakeContextCurrent(_shared_window);
     glm::vec4 bg_color = glm::vec4(61.0f / 255.0f, 57.0f / 255.0f, 90.0f / 255.0f, 1.00f);
+
+    for (const auto& frame : _image_frames) {
+        data::ImageData* data = std::get<0>(frame);
+        double x = std::get<1>(frame);
+        double y = std::get<2>(frame);
+        double width = std::get<3>(frame);
+        double height = std::get<4>(frame);
+        _image_views.emplace_back(std::make_unique<view::ImageView>(data, x, y, width, height));
+    }
+
     while (!!glfwWindowShouldClose(_shared_window) == false) {
         glfwPollEvents();
         int screen_width, screen_height;
@@ -48,28 +58,25 @@ void Window::_run()
         glClearColor(bg_color.x, bg_color.y, bg_color.z, bg_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        for (auto& item : _views) {
-            View* view = std::get<0>(item);
-            double _x = std::get<1>(item);
-            double _y = std::get<2>(item);
-            double _width = std::get<3>(item);
-            double _height = std::get<4>(item);
-            int x = screen_width * _x;
-            int y = screen_height * _y;
-            int width = screen_width * _width;
-            int height = screen_height * _height;
-            int window_width, window_height;
-            glfwGetWindowSize(_shared_window, &window_width, &window_height);
-            glViewport(x, window_height - y - height, width, height);
-            view->render(_shared_window);
+        int window_width, window_height;
+        glfwGetWindowSize(_shared_window, &window_width, &window_height);
+
+        for (const auto& view : _image_views) {
+            int x = screen_width * view->x();
+            int y = screen_height * view->y();
+            int width = screen_width * view->width();
+            int height = screen_height * view->height();
+            glViewport(0, 0, screen_width, screen_height);
+            // glViewport(x, window_height - y - height, width, height);
+            view->render();
         }
 
         glfwSwapBuffers(_shared_window);
     }
 }
-void Window::add_view(view::ImageView* view, double x, double y, double width, double height)
+void Window::add_view(data::ImageData* data, double x, double y, double width, double height)
 {
-    _views.emplace_back(std::make_tuple(view, x, y, width, height));
+    _image_frames.emplace_back(std::make_tuple(data, x, y, width, height));
 }
 void Window::show()
 {

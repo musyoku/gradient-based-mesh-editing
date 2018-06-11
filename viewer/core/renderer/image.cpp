@@ -92,12 +92,12 @@ void main(){
             GL_RGB, GL_UNSIGNED_BYTE, data);
         glBindTexture(GL_TEXTURE_2D, 0);
     }
-    void ImageRenderer::render(GLFWwindow* window)
+    void ImageRenderer::render()
     {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glUseProgram(_program);
-        
+
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture_id);
         glBindSampler(_texture_unit, _sampler_id);

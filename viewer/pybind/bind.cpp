@@ -5,7 +5,7 @@ namespace py = pybind11;
 
 PYBIND11_MODULE(viewer, m)
 {
-    py::class_<viewer::view::ImageView>(m, "ImageView")
+    py::class_<viewer::data::ImageData>(m, "ImageData")
         .def(py::init<int, int, int>(), py::arg("height"), py::arg("width"), py::arg("num_channels"));
 
     py::class_<viewer::Window>(m, "Window")

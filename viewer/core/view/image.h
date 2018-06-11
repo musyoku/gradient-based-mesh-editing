@@ -1,5 +1,6 @@
 #pragma once
 #include "../base/view.h"
+#include "../data/image.h"
 #include "../renderer/image.h"
 #include <external/gl3w/gl3w.h>
 #include <external/glfw/glfw3.h>
@@ -10,18 +11,13 @@ namespace viewer {
 namespace view {
     class ImageView : public View {
     private:
-        int _height;
-        int _width;
-        int _num_channels;
-        std::unique_ptr<GLubyte[]> _data;
+        data::ImageData* _data;
         std::unique_ptr<renderer::ImageRenderer> _renderer;
+        void _bind_data();
 
     public:
-        ImageView(int height, int width, int num_channels);
-        void resize(int height, int width, int num_channels);
-        void set_data(pybind11::array_t<GLubyte> data);
-        void update(pybind11::array_t<GLubyte> data, int height, int width, int num_channels);
-        void render(GLFWwindow* window);
+        ImageView(data::ImageData* data, int x, int y, int width, int height);
+        void render();
     };
 }
 }

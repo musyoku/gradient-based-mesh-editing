@@ -5,74 +5,22 @@
 
 namespace viewer {
 namespace view {
-    ImageView::ImageView(int height, int width, int num_channels)
+    ImageView::ImageView(data::ImageData* data, int x, int y, int width, int height)
+        : View(x, y, width, height)
     {
-        if (num_channels != 1 && num_channels != 3) {
-            std::runtime_error("num_channels != 1 && num_channels != 3");
-        }
-        if (height <= 0) {
-            std::runtime_error("height <= 0");
-        }
-        if (width <= 0) {
-            std::runtime_error("width <= 0");
-        }
-        _height = height;
-        _width = width;
-        _num_channels = num_channels;
-        _data = std::make_unique<GLubyte[]>(height * width * 3);
+        _data = data;
         _renderer = std::make_unique<renderer::ImageRenderer>();
     }
-    void ImageView::resize(int height, int width, int num_channels)
+    void ImageView::_bind_data()
     {
-        _data = std::make_unique<GLubyte[]>(height * width * 3);
+        _renderer->set_data(_data->raw(), _data->height(), _data->width());
     }
-    void ImageView::set_data(pybind11::array_t<GLubyte> data)
+    void ImageView::render()
     {
-        auto size = data.size();
-        if (size != _height * _width * _num_channels) {
-            std::runtime_error("`data.size` muse be equal to `_height * _width * _num_channels`.");
+        if (_data->updated()) {
+            _bind_data();
         }
-        if (data.ndim() < 2 || data.ndim() > 3) {
-            std::runtime_error("(data.ndim() < 2 || data.ndim() > 3) -> false");
-        }
-        if (data.ndim() == 2 && _num_channels != 1) {
-            std::runtime_error("(data.ndim() == 2 && _num_channels != 1) -> false");
-        }
-        if (data.ndim() == 3 && _num_channels != 3) {
-            std::runtime_error("(data.ndim() == 3 && _num_channels != 3) -> false");
-        }
-        if (data.ndim() == 2) {
-            auto ptr = data.mutable_unchecked<2>();
-            for (ssize_t h = 0; h < data.shape(0); h++) {
-                for (ssize_t w = 0; w < data.shape(1); w++) {
-                    ssize_t index = h * _width + w;
-                    GLubyte intensity = ptr(h, w);
-                    _data[index * 3 + 0] = intensity;
-                    _data[index * 3 + 1] = intensity;
-                    _data[index * 3 + 2] = intensity;
-                }
-            }
-        } else {
-            auto ptr = data.mutable_unchecked<3>();
-            for (ssize_t h = 0; h < data.shape(0); h++) {
-                for (ssize_t w = 0; w < data.shape(1); w++) {
-                    for (ssize_t c = 0; c < data.shape(2); c++) {
-                        ssize_t index = h * _width * _num_channels + w * _num_channels + c;
-                        _data[index] = ptr(h, w, c);
-                    }
-                }
-            }
-        }
-        _renderer->set_data(_data.get(), _height, _width);
-    }
-    void ImageView::update(pybind11::array_t<GLubyte> data, int height, int width, int num_channels)
-    {
-        resize(height, width, num_channels);
-        set_data(data);
-    }
-    void ImageView::render(GLFWwindow* window)
-    {
-        _renderer->render(window);
+        _renderer->render();
     }
 }
 }

@@ -1,10 +1,19 @@
 #pragma once
-#include <external/gl3w/gl3w.h>
-#include <external/glfw/glfw3.h>
 
 namespace viewer {
 class View {
+protected:
+    int _x;
+    int _y;
+    int _width;
+    int _height;
+
 public:
-    virtual void render(GLFWwindow* window);
+    View(int x, int y, int width, int height);
+    int x();
+    int y();
+    int width();
+    int height();
+    virtual void render();
 };
 }

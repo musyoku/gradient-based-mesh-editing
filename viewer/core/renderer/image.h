@@ -21,7 +21,7 @@ namespace renderer {
     public:
         ImageRenderer();
         void set_data(GLubyte* data, int height, int width);
-        void render(GLFWwindow* window);
+        void render();
     };
 }
 }
