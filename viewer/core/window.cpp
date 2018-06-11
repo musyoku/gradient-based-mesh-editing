@@ -1,14 +1,15 @@
 #include "window.h"
 #include <external/glm/glm.hpp>
-#include <iostream>
 
 namespace viewer {
 void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "Error %d: %s\n", error, description);
 }
-Window::Window()
+Window::Window(Figure* figure)
 {
+    _figure = figure;
+
     glfwSetErrorCallback(glfw_error_callback);
     if (!!glfwInit() == false) {
         std::runtime_error("Failed to initialize GLFW.");
@@ -41,7 +42,7 @@ void Window::_run()
     glfwMakeContextCurrent(_shared_window);
     glm::vec4 bg_color = glm::vec4(61.0f / 255.0f, 57.0f / 255.0f, 90.0f / 255.0f, 1.00f);
 
-    for (const auto& frame : _image_frames) {
+    for (const auto& frame : _figure->_images) {
         data::ImageData* data = std::get<0>(frame);
         double x = std::get<1>(frame);
         double y = std::get<2>(frame);
@@ -74,10 +75,6 @@ void Window::_run()
         glfwSwapBuffers(_shared_window);
     }
     glfwDestroyWindow(_shared_window);
-}
-void Window::add_view(data::ImageData* data, double x, double y, double width, double height)
-{
-    _image_frames.emplace_back(std::make_tuple(data, x, y, width, height));
 }
 void Window::show()
 {

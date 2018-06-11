@@ -13,10 +13,21 @@ def main():
     faces_batch = faces[None, ...]
 
     silhouette_size = (256, 256)
-    window = gme.viewer.Window()
-    datasource_gradient = gme.viewer.ImageData(silhouette_size[0],
-                                           silhouette_size[1], 1)
-    window.add_view(datasource_gradient, 0, 0, 0.5, 0.5)
+
+    figure = gme.viewer.Figure()
+    width, height = silhouette_size
+
+    axes_sign = gme.viewer.ImageData(width, height, 1)
+    axes_gradient = gme.viewer.ImageData(width, height, 1)
+    axes_silhouette = gme.viewer.ImageData(width, height, 1)
+    axes_target = gme.viewer.ImageData(width, height, 1)
+
+    figure.add(axes_sign, 0, 0, 0.5, 0.5)
+    figure.add(axes_gradient, 0, 0.5, 0.5, 0.5)
+    figure.add(axes_silhouette, 0.5, 0, 0.5, 0.5)
+    figure.add(axes_target, 0.5, 0.5, 0.5, 0.5)
+
+    window = gme.viewer.Window(figure)
     window.show()
 
     # オブジェクトを適当に回転させる
@@ -86,24 +97,11 @@ def main():
         grad_image[grad_image < 0] = 64
         #################
 
-        # print(faces_batch.size)
-        # print(face_vertices_batch.size)
-        # print(perspective_vertices_batch.size)
-
-        # print(face_index_map_batch.size)
-        # print(object_silhouette_batch.size)
-
-        # print(grad_vertices_batch.size)
-        # print(grad_silhouette_batch.size)
-        # print(debug_grad_map.size)
-
-        # browser.update_top_left_image(np.uint8(grad_image))
-        # browser.update_bottom_left_image(np.uint8(debug_grad_map[0]))
-        # browser.update_top_right_image(depth_map_image)
-        # browser.update_bottom_right_image(
-        #     np.uint8(target_silhouette_batch[0]))
         # browser.update_object(np.ascontiguousarray(vertices_batch[0]))
-        datasource_gradient.set(depth_map_image)
+        axes_sign.set(np.uint8(grad_image))
+        axes_silhouette.set(depth_map_image)
+        axes_gradient.set(np.uint8(debug_grad_map[0]))
+        axes_target.set(np.uint8(target_silhouette_batch[0]))
 
 
 if __name__ == "__main__":
