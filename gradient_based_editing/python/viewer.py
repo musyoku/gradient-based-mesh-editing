@@ -15,7 +15,8 @@ def main():
     silhouette_size = (256, 256)
     window = gme.viewer.Window()
     grad_image_view = gme.viewer.ImageView(silhouette_size[0],
-                                          silhouette_size[1], 1)
+                                           silhouette_size[1], 1)
+    window.add_view(grad_image_view, 0, 0, 0.5, 0.5)
     window.show()
 
     # オブジェクトを適当に回転させる

@@ -21,7 +21,7 @@ Window::Window()
 #if __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
-    _window = glfwCreateWindow(1, 1, "Gradient-based Mesh Editing", NULL, NULL);
+    _window = glfwCreateWindow(1, 1, "", NULL, NULL);
     glfwMakeContextCurrent(_window);
     glfwSwapInterval(1);
     gl3wInit();
@@ -47,8 +47,29 @@ void Window::_run()
         glViewport(0, 0, screen_width, screen_height);
         glClearColor(bg_color.x, bg_color.y, bg_color.z, bg_color.w);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        for (auto& item : _views) {
+            View* view = std::get<0>(item);
+            double _x = std::get<1>(item);
+            double _y = std::get<2>(item);
+            double _width = std::get<3>(item);
+            double _height = std::get<4>(item);
+            int x = screen_width * _x;
+            int y = screen_height * _y;
+            int width = screen_width * _width;
+            int height = screen_height * _height;
+            int window_width, window_height;
+            glfwGetWindowSize(_shared_window, &window_width, &window_height);
+            glViewport(x, window_height - y - height, width, height);
+            view->render(_shared_window);
+        }
+
         glfwSwapBuffers(_shared_window);
     }
+}
+void Window::add_view(view::ImageView* view, double x, double y, double width, double height)
+{
+    _views.emplace_back(std::make_tuple(view, x, y, width, height));
 }
 void Window::show()
 {
@@ -57,6 +78,5 @@ void Window::show()
     } catch (const std::system_error& e) {
         std::runtime_error(e.what());
     }
-    std::cout << "showed" << std::endl;
 }
 }
