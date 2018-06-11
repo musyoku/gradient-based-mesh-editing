@@ -66,13 +66,14 @@ void Window::_run()
             int y = screen_height * view->y();
             int width = screen_width * view->width();
             int height = screen_height * view->height();
-            glViewport(0, 0, screen_width, screen_height);
-            // glViewport(x, window_height - y - height, width, height);
+            // glViewport(0, 0, screen_width, screen_height);
+            glViewport(x, window_height - y - height, width, height);
             view->render();
         }
 
         glfwSwapBuffers(_shared_window);
     }
+    glfwDestroyWindow(_shared_window);
 }
 void Window::add_view(data::ImageData* data, double x, double y, double width, double height)
 {

@@ -3,17 +3,17 @@
 namespace viewer {
 class View {
 protected:
-    int _x;
-    int _y;
-    int _width;
-    int _height;
+    double _x;
+    double _y;
+    double _width;
+    double _height;
 
 public:
-    View(int x, int y, int width, int height);
-    int x();
-    int y();
-    int width();
-    int height();
+    View(double x, double y, double width, double height);
+    double x();
+    double y();
+    double width();
+    double height();
     virtual void render();
 };
 }

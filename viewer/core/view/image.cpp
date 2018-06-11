@@ -5,7 +5,7 @@
 
 namespace viewer {
 namespace view {
-    ImageView::ImageView(data::ImageData* data, int x, int y, int width, int height)
+    ImageView::ImageView(data::ImageData* data, double x, double y, double width, double height)
         : View(x, y, width, height)
     {
         _data = data;

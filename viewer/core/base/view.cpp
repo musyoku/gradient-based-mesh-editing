@@ -2,26 +2,26 @@
 #include <stdexcept>
 
 namespace viewer {
-View::View(int x, int y, int width, int height)
+View::View(double x, double y, double width, double height)
 {
     _x = x;
     _y = y;
     _width = width;
     _height = height;
 }
-int View::x()
+double View::x()
 {
     return _x;
 }
-int View::y()
+double View::y()
 {
     return _y;
 }
-int View::width()
+double View::width()
 {
     return _width;
 }
-int View::height()
+double View::height()
 {
     return _height;
 }

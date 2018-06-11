@@ -8,7 +8,7 @@ namespace renderer {
     ImageRenderer::ImageRenderer()
     {
         const GLchar vertex_shader[] = R"(
-#version 400
+#version 410
 in vec2 position;
 in vec2 uv;
 out vec2 coord;
@@ -20,13 +20,12 @@ void main(void)
 )";
 
         const GLchar fragment_shader[] = R"(
-#version 400
+#version 410
 uniform sampler2D image;
 in vec2 coord;
 out vec4 color;
 void main(){
     color = texture(image, coord);
-    color = vec4(1.0);
 }
 )";
 

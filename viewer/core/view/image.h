@@ -16,7 +16,7 @@ namespace view {
         void _bind_data();
 
     public:
-        ImageView(data::ImageData* data, int x, int y, int width, int height);
+        ImageView(data::ImageData* data, double x, double y, double width, double height);
         void render();
     };
 }

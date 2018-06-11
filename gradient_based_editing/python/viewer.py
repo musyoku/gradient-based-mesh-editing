@@ -103,6 +103,7 @@ def main():
         # browser.update_bottom_right_image(
         #     np.uint8(target_silhouette_batch[0]))
         # browser.update_object(np.ascontiguousarray(vertices_batch[0]))
+        datasource_gradient.set(depth_map_image)
 
 
 if __name__ == "__main__":
