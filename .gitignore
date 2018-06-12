@@ -12,6 +12,7 @@
 !*.hpp
 !*.cpp
 !*.md
+!*.inl
 !.gitignore
 !makefile
 !python/objects/*/*
