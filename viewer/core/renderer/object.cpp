@@ -103,6 +103,7 @@ void main(){
     void ObjectRenderer::render(GLfloat aspect_ratio)
     {
         glUseProgram(_program);
+        glClearColor(0.9, 0.9, 0.9, 1.0);
         glBindVertexArray(_vao);
 
         glm::mat4 projection_mat = glm::perspective(
@@ -140,7 +141,7 @@ void main(){
     void ObjectRenderer::rotate_camera(double diff_x, double diff_y)
     {
         double delta_angle_rad = (diff_y > 0 ? 1.0 : -1.0) * M_PI * 0.01;
-        glm::vec3 axis = glm::vec3(1.0, diff_x > 0 ? 1.0 : -1.0, 0.0);
+        glm::vec3 axis = glm::vec3(0.0, diff_x > 0 ? 1.0 : -1.0, 0.0);
         _model_mat = glm::rotate(_model_mat, (float)delta_angle_rad, axis);
         _light_mat = glm::rotate(_light_mat, (float)-delta_angle_rad, axis);
     }

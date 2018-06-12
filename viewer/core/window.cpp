@@ -56,6 +56,7 @@ void Window::_run()
     glEnable(GL_CULL_FACE);
     glEnable(GL_DEPTH_TEST);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glClearColor(0.0, 0.0, 0.0, 1.0);
 
     for (const auto& frame : _figure->_images) {
         data::ImageData* data = std::get<0>(frame);
@@ -80,8 +81,6 @@ void Window::_run()
         int screen_width, screen_height;
         glfwGetFramebufferSize(_shared_window, &screen_width, &screen_height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glViewport(0, 0, screen_width, screen_height);
-        glClearColor(0.0, 0.0, 0.0, 0.0);
 
         for (const auto& view : _images) {
             _render_view(view.get());
