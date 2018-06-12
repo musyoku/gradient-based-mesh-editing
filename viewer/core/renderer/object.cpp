@@ -7,7 +7,7 @@ namespace renderer {
     ObjectRenderer::ObjectRenderer(GLfloat* vertices, int num_vertices, GLuint* faces, int num_faces)
     {
         _num_faces = num_faces;
-        _camera_location = glm::vec3(1.0, 1.0, 1.0);
+        _camera_location = glm::vec3(0.0, 0.0, 3.0);
         _view_mat = glm::lookAt(
             _camera_location,
             glm::vec3(0.0, 0.0, 0.0),
@@ -70,14 +70,14 @@ void main(){
         glUseProgram(_program);
         glBindVertexArray(_vao);
 
-        const GLfloat mat[] = {
-            aspect_ratio, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f
-        };
+        glm::mat4 projection_mat = glm::perspective(
+            90.0f,
+            aspect_ratio,
+            0.1f,
+            100.0f);
 
-        glUniformMatrix4fv(_uniform_mat, 1, GL_FALSE, &_view_mat[0][0]);
+        glm::mat4 mat = projection_mat * _view_mat;
+        glUniformMatrix4fv(_uniform_mat, 1, GL_FALSE, &mat[0][0]);
 
         glDrawElements(GL_TRIANGLES, 3 * _num_faces, GL_UNSIGNED_INT, 0);
 
