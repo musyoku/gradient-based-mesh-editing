@@ -8,8 +8,9 @@
 !*.py
 !*.pyx
 !*.h
-!*.cpp
 !*.c
+!*.hpp
+!*.cpp
 !*.md
 !.gitignore
 !makefile
