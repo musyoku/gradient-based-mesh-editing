@@ -15,11 +15,13 @@ protected:
     GLFWwindow* _shared_window;
     Figure* _figure;
     std::vector<std::unique_ptr<view::ImageView>> _image_views;
+    bool _closed;
     void _run();
 
 public:
     Window(Figure* figure);
     ~Window();
     void show();
+    bool closed();
 };
 }

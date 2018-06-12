@@ -103,6 +103,9 @@ def main():
         axes_gradient.set(np.uint8(debug_grad_map[0]))
         axes_target.set(np.uint8(target_silhouette_batch[0]))
 
+        if window.closed():
+            return
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

@@ -19,5 +19,6 @@ PYBIND11_MODULE(viewer, m)
 
     py::class_<Window>(m, "Window")
         .def(py::init<Figure*>())
+        .def("closed", &Window::closed)
         .def("show", &Window::show);
 }

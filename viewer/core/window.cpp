@@ -9,6 +9,7 @@ void glfw_error_callback(int error, const char* description)
 Window::Window(Figure* figure)
 {
     _figure = figure;
+    _closed = false;
 
     glfwSetErrorCallback(glfw_error_callback);
     if (!!glfwInit() == false) {
@@ -75,6 +76,7 @@ void Window::_run()
         glfwSwapBuffers(_shared_window);
     }
     glfwDestroyWindow(_shared_window);
+    _closed = true;
 }
 void Window::show()
 {
@@ -83,5 +85,9 @@ void Window::show()
     } catch (const std::system_error& e) {
         std::runtime_error(e.what());
     }
+}
+bool Window::closed()
+{
+    return _closed;
 }
 }
