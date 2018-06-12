@@ -25,7 +25,7 @@ double View::height()
 {
     return _height;
 }
-void View::render()
+void View::render(double aspect_ratio)
 {
     std::runtime_error("Function `render` must be overridden.");
 }

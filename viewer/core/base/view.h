@@ -14,6 +14,6 @@ public:
     double y();
     double width();
     double height();
-    virtual void render();
+    virtual void render(double aspect_ratio);
 };
 }
