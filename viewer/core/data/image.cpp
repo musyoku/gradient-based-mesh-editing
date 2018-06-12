@@ -1,6 +1,6 @@
 #include "image.h"
 #include "../opengl.h"
-#include <external/glm/glm.hpp>
+#include <glm/glm.hpp>
 #include <iostream>
 
 namespace viewer {

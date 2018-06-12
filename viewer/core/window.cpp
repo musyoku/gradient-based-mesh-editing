@@ -1,5 +1,5 @@
 #include "window.h"
-#include <external/glm/glm.hpp>
+#include <glm/glm.hpp>
 
 namespace viewer {
 void glfw_error_callback(int error, const char* description)

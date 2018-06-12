@@ -2,8 +2,8 @@
 #include "../base/view.h"
 #include "../data/image.h"
 #include "../renderer/image.h"
-#include <external/gl3w/gl3w.h>
-#include <external/glfw/glfw3.h>
+#include <gl3w/gl3w.h>
+#include <glfw/glfw3.h>
 #include <memory>
 #include <pybind11/numpy.h>
 

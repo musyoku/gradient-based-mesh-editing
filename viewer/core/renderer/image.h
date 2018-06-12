@@ -1,6 +1,6 @@
 #pragma once
-#include <external/gl3w/gl3w.h>
-#include <external/glfw/glfw3.h>
+#include <gl3w/gl3w.h>
+#include <glfw/glfw3.h>
 
 namespace viewer {
 namespace renderer {
