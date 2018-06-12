@@ -48,6 +48,9 @@ void Window::_run()
     glfwSetCursorPosCallback(_shared_window, [](GLFWwindow* window, double x, double y) {
         static_cast<Window*>(glfwGetWindowUserPointer(window))->_callback_cursor_move(window, x, y);
     });
+    glfwSetMouseButtonCallback(_shared_window, [](GLFWwindow* window, int button, int action, int mods) {
+        static_cast<Window*>(glfwGetWindowUserPointer(window))->_callback_mouse_button(window, button, action, mods);
+    });
 
     glEnable(GL_BLEND);
     glEnable(GL_CULL_FACE);
@@ -133,7 +136,25 @@ void Window::_callback_scroll(GLFWwindow* window, double x, double y)
 }
 void Window::_callback_cursor_move(GLFWwindow* window, double x, double y)
 {
+    if (_mouse.is_left_button_down) {
+        int screen_width, screen_height;
+        glfwGetFramebufferSize(_shared_window, &screen_width, &screen_height);
+        for (const auto& view : _objects) {
+            if (view->contains(_mouse.x, _mouse.y, screen_width, screen_height)) {
+                double diff_x = _mouse.x - x;
+                double diff_y = _mouse.y - y;
+                view->rotate_camera(diff_x, diff_y);
+            }
+        }
+    }
     _mouse.x = x;
     _mouse.y = y;
+}
+
+void Window::_callback_mouse_button(GLFWwindow* window, int button, int action, int mods)
+{
+    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+        _mouse.is_left_button_down = (action == GLFW_PRESS);
+    }
 }
 }

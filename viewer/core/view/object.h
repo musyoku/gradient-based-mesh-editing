@@ -21,6 +21,7 @@ namespace view {
         ObjectView(data::ObjectData* data, double x, double y, double width, double height);
         void zoom_in();
         void zoom_out();
+        void rotate_camera(double diff_x, double diff_y);
         virtual void render(double aspect_ratio);
     };
 }

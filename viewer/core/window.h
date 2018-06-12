@@ -28,6 +28,7 @@ protected:
     void _render_view(View* view);
     void _callback_scroll(GLFWwindow* window, double x, double y);
     void _callback_cursor_move(GLFWwindow* window, double x, double y);
+    void _callback_mouse_button(GLFWwindow* window, int button, int action, int mods);
 
 public:
     Window(Figure* figure);

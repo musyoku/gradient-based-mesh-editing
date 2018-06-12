@@ -6,7 +6,7 @@ import gradient_based_editing as gme
 
 def main():
     # オブジェクトの読み込み
-    vertices, faces = gme.objects.load("objects/teapot.obj")
+    vertices, faces = gme.objects.load("objects/cube.obj")
 
     # ミニバッチ化
     vertices_batch = vertices[None, ...]
@@ -93,7 +93,7 @@ def main():
         debug_grad_map /= np.amax(debug_grad_map)
         debug_grad_map *= 255
 
-        vertices_batch -= 0.00005 * grad_vertices_batch
+        # vertices_batch -= 0.00005 * grad_vertices_batch
         grad_image = np.copy(grad_silhouette_batch[0]) * 255
         grad_image[grad_image > 0] = 255
         grad_image[grad_image < 0] = 64

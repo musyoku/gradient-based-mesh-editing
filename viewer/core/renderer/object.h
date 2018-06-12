@@ -19,6 +19,7 @@ namespace renderer {
         GLuint _vbo_uv;
         int _num_faces;
         glm::mat4 _view_mat;
+        glm::mat4 _model_mat;
         glm::vec3 _camera_location;
 
     public:
@@ -30,6 +31,7 @@ namespace renderer {
         void render(GLfloat aspect_ratio);
         void zoom_in();
         void zoom_out();
+        void rotate_camera(double diff_x, double diff_y);
     };
 }
 }

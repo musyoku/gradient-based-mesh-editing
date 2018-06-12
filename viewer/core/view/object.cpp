@@ -44,5 +44,9 @@ namespace view {
     {
         _renderer->zoom_out();
     }
+    void ObjectView::rotate_camera(double diff_x, double diff_y)
+    {
+        _renderer->rotate_camera(diff_x, diff_y);
+    }
 }
 }

@@ -65,8 +65,8 @@ namespace data {
             glm::vec3 vb = glm::vec3(_vertices[fb * 3 + 0], _vertices[fb * 3 + 1], _vertices[fb * 3 + 2]);
             glm::vec3 vc = glm::vec3(_vertices[fc * 3 + 0], _vertices[fc * 3 + 1], _vertices[fc * 3 + 2]);
             glm::vec3 vba = vb - va;
-            glm::vec3 vcb = vc - vb;
-            glm::vec3 normal = glm::normalize(glm::cross(vba, vcb));
+            glm::vec3 vca = vc - va;
+            glm::vec3 normal = glm::normalize(glm::cross(vba, vca));
             _vertices_normal_vectors[fa * 3 + 0] += normal.x;
             _vertices_normal_vectors[fa * 3 + 1] += normal.y;
             _vertices_normal_vectors[fa * 3 + 2] += normal.z;

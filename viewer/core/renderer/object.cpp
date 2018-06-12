@@ -8,6 +8,7 @@ namespace renderer {
     {
         _num_faces = num_faces;
         _camera_location = glm::vec3(0.0, 0.0, 3.0);
+        _model_mat = glm::mat4(1.0);
         _view_mat = glm::lookAt(
             _camera_location,
             glm::vec3(0.0, 0.0, 0.0),
@@ -18,21 +19,21 @@ namespace renderer {
 in vec3 position;
 in vec3 normal_vector;
 uniform mat4 pvm;
-out float power;
+flat out float power;
 void main(void)
 {
     gl_Position = pvm * vec4(position, 1.0);
     vec3 light_direction = vec3(0.0, -1.0, -1.0);
     // vec3 normal = normalize((vec4(normal_vector, 0.0) * pvm).xyz);
     power = dot(normal_vector, -normalize(light_direction));
-    power = clamp(power, 0.1, 1.0);
+    power = clamp(power, 0.0, 1.0);
     // power = clamp((normal_vector + 1.0) / 2.0, 0.0, 1.0);
 }
 )";
 
         const GLchar fragment_shader[] = R"(
 #version 410
-in float power;
+flat in float power;
 out vec4 frag_color;
 void main(){
     frag_color = vec4(power * vec3(1.0), 1.0);
@@ -106,7 +107,7 @@ void main(){
             0.1f,
             100.0f);
 
-        glm::mat4 pvm = projection_mat * _view_mat;
+        glm::mat4 pvm = projection_mat * _view_mat * _model_mat;
         glUniformMatrix4fv(_uniform_pvm, 1, GL_FALSE, &pvm[0][0]);
 
         glDrawElements(GL_TRIANGLES, 3 * _num_faces, GL_UNSIGNED_INT, 0);
@@ -129,6 +130,10 @@ void main(){
             _camera_location,
             glm::vec3(0.0, 0.0, 0.0),
             glm::vec3(0.0, 1.0, 0.0));
+    }
+    void ObjectRenderer::rotate_camera(double diff_x, double diff_y)
+    {
+        _model_mat = glm::rotate(_model_mat, 0.01f, glm::vec3(diff_x, diff_y, 0.0));
     }
 }
 }
