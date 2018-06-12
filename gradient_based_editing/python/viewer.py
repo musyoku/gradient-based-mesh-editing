@@ -17,15 +17,16 @@ def main():
     figure = gme.viewer.Figure()
     width, height = silhouette_size
 
-    axes_sign = gme.viewer.ImageData(width, height, 1)
-    axes_gradient = gme.viewer.ImageData(width, height, 1)
-    axes_silhouette = gme.viewer.ImageData(width, height, 1)
-    axes_target = gme.viewer.ImageData(width, height, 1)
+    axis_sign = gme.viewer.ImageData(width, height, 1)
+    axis_gradient = gme.viewer.ImageData(width, height, 1)
+    axis_silhouette = gme.viewer.ImageData(width, height, 1)
+    axis_target = gme.viewer.ImageData(width, height, 1)
+    axis_object = gme.viewer.MeshData(vertices.shape[0], faces.shape[0])
 
-    figure.add(axes_sign, 0, 0, 0.5, 0.5)
-    figure.add(axes_gradient, 0, 0.5, 0.5, 0.5)
-    figure.add(axes_silhouette, 0.5, 0, 0.5, 0.5)
-    figure.add(axes_target, 0.5, 0.5, 0.5, 0.5)
+    figure.add(axis_sign, 0, 0, 0.25, 0.5)
+    figure.add(axis_gradient, 0, 0.5, 0.25, 0.5)
+    figure.add(axis_silhouette, 0.75, 0, 0.25, 0.5)
+    figure.add(axis_target, 0.75, 0.5, 0.25, 0.5)
 
     window = gme.viewer.Window(figure)
     window.show()
@@ -98,10 +99,10 @@ def main():
         #################
 
         # browser.update_object(np.ascontiguousarray(vertices_batch[0]))
-        axes_sign.set(np.uint8(grad_image))
-        axes_silhouette.set(depth_map_image)
-        axes_gradient.set(np.uint8(debug_grad_map[0]))
-        axes_target.set(np.uint8(target_silhouette_batch[0]))
+        axis_sign.update(np.uint8(grad_image))
+        axis_silhouette.update(depth_map_image)
+        axis_gradient.update(np.uint8(debug_grad_map[0]))
+        axis_target.update(np.uint8(target_silhouette_batch[0]))
 
         if window.closed():
             return

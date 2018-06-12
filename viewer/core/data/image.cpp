@@ -1,7 +1,4 @@
 #include "image.h"
-#include "../opengl.h"
-#include <glm/glm.hpp>
-#include <iostream>
 
 namespace viewer {
 namespace data {
@@ -25,7 +22,7 @@ namespace data {
     {
         _data = std::make_unique<GLubyte[]>(height * width * 3);
     }
-    void ImageData::set(pybind11::array_t<GLubyte> data)
+    void ImageData::update(pybind11::array_t<GLubyte> data)
     {
         auto size = data.size();
         if (size != _height * _width * _num_channels) {
@@ -63,11 +60,6 @@ namespace data {
             }
         }
         _updated = true;
-    }
-    void ImageData::update(pybind11::array_t<GLubyte> data, int height, int width, int num_channels)
-    {
-        resize(height, width, num_channels);
-        set(data);
     }
     bool ImageData::updated()
     {

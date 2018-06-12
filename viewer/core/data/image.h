@@ -16,8 +16,7 @@ namespace data {
     public:
         ImageData(int height, int width, int num_channels);
         void resize(int height, int width, int num_channels);
-        void set(pybind11::array_t<GLubyte> data);
-        void update(pybind11::array_t<GLubyte> data, int height, int width, int num_channels);
+        void update(pybind11::array_t<GLubyte> data);
         bool updated();
         GLubyte* raw();
         int height();
