@@ -15,7 +15,8 @@
 !*.inl
 !.gitignore
 !makefile
-!python/objects/*/*
+!faces
+!vertices
 
 # ignore
 js/node_modules

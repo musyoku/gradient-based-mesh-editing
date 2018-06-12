@@ -15,7 +15,6 @@ namespace renderer {
         GLuint _vbo_vertices;
         GLuint _vbo_faces;
         GLuint _vbo_uv;
-        GLuint _vbo_indices;
         GLuint _texture_id;
         GLuint _texture_unit;
         GLuint _sampler_id;
