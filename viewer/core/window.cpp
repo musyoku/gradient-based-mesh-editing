@@ -41,7 +41,11 @@ void Window::_run()
     glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
     _shared_window = glfwCreateWindow(1920, 800, "Gradient-based Mesh Editing", NULL, _window);
     glfwMakeContextCurrent(_shared_window);
-    glm::vec4 bg_color = glm::vec4(61.0f / 255.0f, 57.0f / 255.0f, 90.0f / 255.0f, 1.00f);
+
+    glEnable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_DEPTH_TEST);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     for (const auto& frame : _figure->_images) {
         data::ImageData* data = std::get<0>(frame);
@@ -56,21 +60,21 @@ void Window::_run()
         glfwPollEvents();
         int screen_width, screen_height;
         glfwGetFramebufferSize(_shared_window, &screen_width, &screen_height);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glViewport(0, 0, screen_width, screen_height);
-        glClearColor(bg_color.x, bg_color.y, bg_color.z, bg_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(0.0, 0.0, 0.0, 0.0);
 
-        int window_width, window_height;
-        glfwGetWindowSize(_shared_window, &window_width, &window_height);
+        // int window_width, window_height;
+        // glfwGetWindowSize(_shared_window, &window_width, &window_height);
 
         for (const auto& view : _image_views) {
             int x = screen_width * view->x();
             int y = screen_height * view->y();
             int width = screen_width * view->width();
             int height = screen_height * view->height();
-            // glViewport(0, 0, screen_width, screen_height);
-            glViewport(x, window_height - y - height, width, height);
-            view->render();
+            glViewport(x, screen_height - y - height, width, height);
+            double aspect_ratio = (double)height / (double)width;
+            view->render(aspect_ratio);
         }
 
         glfwSwapBuffers(_shared_window);

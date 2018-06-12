@@ -7,11 +7,13 @@ namespace renderer {
     class ImageRenderer {
     private:
         GLuint _program;
-        GLuint _attribute_image;
         GLuint _attribute_uv;
         GLuint _attribute_position;
+        GLuint _uniform_image;
+        GLuint _uniform_mat;
         GLuint _vao;
-        GLuint _vbo_position;
+        GLuint _vbo_vertices;
+        GLuint _vbo_faces;
         GLuint _vbo_uv;
         GLuint _vbo_indices;
         GLuint _texture_id;
@@ -21,7 +23,7 @@ namespace renderer {
     public:
         ImageRenderer();
         void set_data(GLubyte* data, int height, int width);
-        void render();
+        void render(GLfloat aspect_ratio);
     };
 }
 }

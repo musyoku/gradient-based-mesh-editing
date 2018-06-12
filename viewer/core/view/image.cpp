@@ -15,12 +15,12 @@ namespace view {
     {
         _renderer->set_data(_data->raw(), _data->height(), _data->width());
     }
-    void ImageView::render()
+    void ImageView::render(double aspect_ratio)
     {
         if (_data->updated()) {
             _bind_data();
         }
-        _renderer->render();
+        _renderer->render(aspect_ratio);
     }
 }
 }
