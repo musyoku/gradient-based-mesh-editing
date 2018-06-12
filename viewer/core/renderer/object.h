@@ -11,7 +11,8 @@ namespace renderer {
         GLuint _program;
         GLuint _attribute_position;
         GLuint _attribute_normal_vector;
-        GLuint _uniform_pvm;
+        GLuint _uniform_pvm_mat;
+        GLuint _uniform_light_mat;
         GLuint _vao;
         GLuint _vbo_vertices;
         GLuint _vbo_normal_vectors;
@@ -20,6 +21,7 @@ namespace renderer {
         int _num_faces;
         glm::mat4 _view_mat;
         glm::mat4 _model_mat;
+        glm::mat4 _light_mat;
         glm::vec3 _camera_location;
 
     public:

@@ -9,11 +9,11 @@ namespace view {
         : View(x, y, width, height)
     {
         _data = data;
-        _renderer = std::make_unique<renderer::ObjectRenderer>(data->vertices(), data->num_vertices(), data->faces(), data->num_faces());
+        _renderer = std::make_unique<renderer::ObjectRenderer>(data->extracted_vertices(), data->num_extracted_vertices(), data->faces(), data->num_faces());
     }
     void ObjectView::_bind_vertices()
     {
-        _renderer->update_vertices(_data->vertices(), _data->num_vertices());
+        _renderer->update_vertices(_data->extracted_vertices(), _data->num_extracted_vertices());
     }
     void ObjectView::_bind_faces()
     {
@@ -21,7 +21,7 @@ namespace view {
     }
     void ObjectView::_bind_normal_vectors()
     {
-        _renderer->update_normal_vectors(_data->normal_vectors(), _data->num_vertices());
+        _renderer->update_normal_vectors(_data->normal_vectors(), _data->num_extracted_vertices());
     }
     void ObjectView::render(double aspect_ratio)
     {

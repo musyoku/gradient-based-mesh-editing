@@ -1,6 +1,7 @@
 #include "object.h"
 #include "../opengl.h"
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 namespace viewer {
 namespace renderer {
@@ -9,6 +10,8 @@ namespace renderer {
         _num_faces = num_faces;
         _camera_location = glm::vec3(0.0, 0.0, 3.0);
         _model_mat = glm::mat4(1.0);
+        _light_mat = glm::mat4(1.0);
+
         _view_mat = glm::lookAt(
             _camera_location,
             glm::vec3(0.0, 0.0, 0.0),
@@ -18,16 +21,16 @@ namespace renderer {
 #version 410
 in vec3 position;
 in vec3 normal_vector;
-uniform mat4 pvm;
+uniform mat4 pvm_mat;
+uniform mat4 light_mat;
 flat out float power;
 void main(void)
 {
-    gl_Position = pvm * vec4(position, 1.0);
-    vec3 light_direction = vec3(0.0, -1.0, -1.0);
-    // vec3 normal = normalize((vec4(normal_vector, 0.0) * pvm).xyz);
-    power = dot(normal_vector, -normalize(light_direction));
-    power = clamp(power, 0.0, 1.0);
-    // power = clamp((normal_vector + 1.0) / 2.0, 0.0, 1.0);
+    gl_Position = pvm_mat * vec4(position, 1.0);
+    vec4 light_direction = light_mat * vec4(0.0, -1.0, -1.0, 1.0);
+    // vec3 normal = normalize((vec4(normal_vector, 0.0) * pvm_mat).xyz);
+    power = dot(normal_vector, -normalize(light_direction.xyz));
+    power = clamp(power, 0.1, 1.0);
 }
 )";
 
@@ -44,7 +47,8 @@ void main(){
 
         _attribute_position = glGetAttribLocation(_program, "position");
         _attribute_normal_vector = glGetAttribLocation(_program, "normal_vector");
-        _uniform_pvm = glGetUniformLocation(_program, "pvm");
+        _uniform_pvm_mat = glGetUniformLocation(_program, "pvm_mat");
+        _uniform_light_mat = glGetUniformLocation(_program, "light_mat");
 
         glGenVertexArrays(1, &_vao);
         glBindVertexArray(_vao);
@@ -108,9 +112,11 @@ void main(){
             100.0f);
 
         glm::mat4 pvm = projection_mat * _view_mat * _model_mat;
-        glUniformMatrix4fv(_uniform_pvm, 1, GL_FALSE, &pvm[0][0]);
+        glUniformMatrix4fv(_uniform_pvm_mat, 1, GL_FALSE, &pvm[0][0]);
+        glUniformMatrix4fv(_uniform_light_mat, 1, GL_FALSE, &_light_mat[0][0]);
 
-        glDrawElements(GL_TRIANGLES, 3 * _num_faces, GL_UNSIGNED_INT, 0);
+        // glDrawElements(GL_TRIANGLES, 3 * _num_faces, GL_UNSIGNED_INT, 0);
+        glDrawArrays(GL_TRIANGLES, 0, 3 * _num_faces);
 
         glBindVertexArray(0);
         glUseProgram(0);
@@ -133,7 +139,10 @@ void main(){
     }
     void ObjectRenderer::rotate_camera(double diff_x, double diff_y)
     {
-        _model_mat = glm::rotate(_model_mat, 0.01f, glm::vec3(diff_x, diff_y, 0.0));
+        double delta_angle_rad = (diff_y > 0 ? 1.0 : -1.0) * M_PI * 0.01;
+        glm::vec3 axis = glm::vec3(1.0, diff_x > 0 ? 1.0 : -1.0, 0.0);
+        _model_mat = glm::rotate(_model_mat, (float)delta_angle_rad, axis);
+        _light_mat = glm::rotate(_light_mat, (float)-delta_angle_rad, axis);
     }
 }
 }

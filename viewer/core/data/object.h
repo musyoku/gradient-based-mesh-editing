@@ -13,10 +13,12 @@ namespace data {
         bool _faces_updated;
         bool _normal_vector_updated;
         std::unique_ptr<GLfloat[]> _vertices;
+        std::unique_ptr<GLfloat[]> _extracted_vertices;
         std::unique_ptr<GLfloat[]> _vertices_normal_vectors;
         std::unique_ptr<GLuint[]> _faces;
         void _update_faces(pybind11::array_t<GLuint> faces);
         void _update_vertices(pybind11::array_t<GLfloat> vertices);
+        void _update(pybind11::array_t<GLfloat> vertices, pybind11::array_t<GLuint> faces);
         void _update_normal_vectors();
 
     public:
@@ -28,8 +30,10 @@ namespace data {
         bool faces_updated();
         bool normal_vector_updated();
         int num_vertices();
+        int num_extracted_vertices();
         int num_faces();
         GLfloat* vertices();
+        GLfloat* extracted_vertices();
         GLfloat* normal_vectors();
         GLuint* faces();
     };

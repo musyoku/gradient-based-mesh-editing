@@ -10,9 +10,14 @@ namespace data {
         _num_faces = num_faces;
         _vertices = std::make_unique<GLfloat[]>(num_vertices * 3);
         _faces = std::make_unique<GLuint[]>(num_faces * 3);
-        _vertices_normal_vectors = std::make_unique<GLfloat[]>(num_vertices * 3);
-        _update_vertices(vertices);
+        _vertices_normal_vectors = std::make_unique<GLfloat[]>(num_faces * 9);
+        _extracted_vertices = std::make_unique<GLfloat[]>(num_faces * 9);
+        _update(vertices, faces);
+    }
+    void ObjectData::_update(pybind11::array_t<GLfloat> vertices, pybind11::array_t<GLuint> faces)
+    {
         _update_faces(faces);
+        _update_vertices(vertices);
         _update_normal_vectors();
     }
     void ObjectData::_update_vertices(pybind11::array_t<GLfloat> vertices)
@@ -25,10 +30,18 @@ namespace data {
             std::runtime_error("(vertices.ndim() != 2) -> false");
         }
         auto ptr = vertices.mutable_unchecked<2>();
-        for (ssize_t n = 0; n < vertices.shape(0); n++) {
+        for (int n = 0; n < vertices.shape(0); n++) {
             _vertices[n * 3 + 0] = ptr(n, 0);
             _vertices[n * 3 + 1] = ptr(n, 1);
             _vertices[n * 3 + 2] = ptr(n, 2);
+        }
+        for (int n = 0; n < _num_faces; n++) {
+            for (int f = 0; f < 3; f++) {
+                int face_index = _faces[n * 3 + f];
+                for (int v = 0; v < 3; v++) {
+                    _extracted_vertices[n * 9 + f * 3 + v] = _vertices[face_index * 3 + v];
+                }
+            }
         }
         _vertices_updated = true;
     }
@@ -42,7 +55,7 @@ namespace data {
             std::runtime_error("(faces.ndim() != 2) -> false");
         }
         auto ptr = faces.mutable_unchecked<2>();
-        for (ssize_t n = 0; n < faces.shape(0); n++) {
+        for (int n = 0; n < faces.shape(0); n++) {
             _faces[n * 3 + 0] = ptr(n, 0);
             _faces[n * 3 + 1] = ptr(n, 1);
             _faces[n * 3 + 2] = ptr(n, 2);
@@ -51,11 +64,6 @@ namespace data {
     }
     void ObjectData::_update_normal_vectors()
     {
-        for (int n = 0; n < _num_vertices; n++) {
-            _vertices_normal_vectors[n * 3 + 0] = 0;
-            _vertices_normal_vectors[n * 3 + 1] = 0;
-            _vertices_normal_vectors[n * 3 + 2] = 0;
-        }
         std::unique_ptr<glm::vec3> face_normal_vectors;
         for (int n = 0; n < _num_faces; n++) {
             int fa = _faces[n * 3 + 0];
@@ -67,23 +75,11 @@ namespace data {
             glm::vec3 vba = vb - va;
             glm::vec3 vca = vc - va;
             glm::vec3 normal = glm::normalize(glm::cross(vba, vca));
-            _vertices_normal_vectors[fa * 3 + 0] += normal.x;
-            _vertices_normal_vectors[fa * 3 + 1] += normal.y;
-            _vertices_normal_vectors[fa * 3 + 2] += normal.z;
-
-            _vertices_normal_vectors[fb * 3 + 0] += normal.x;
-            _vertices_normal_vectors[fb * 3 + 1] += normal.y;
-            _vertices_normal_vectors[fb * 3 + 2] += normal.z;
-
-            _vertices_normal_vectors[fc * 3 + 0] += normal.x;
-            _vertices_normal_vectors[fc * 3 + 1] += normal.y;
-            _vertices_normal_vectors[fc * 3 + 2] += normal.z;
-        }
-        for (int n = 0; n < _num_vertices; n++) {
-            glm::vec3 normal = glm::normalize(glm::vec3(_vertices_normal_vectors[n * 3 + 0], _vertices_normal_vectors[n * 3 + 1], _vertices_normal_vectors[n * 3 + 2]));
-            _vertices_normal_vectors[n * 3 + 0] = normal.x;
-            _vertices_normal_vectors[n * 3 + 1] = normal.y;
-            _vertices_normal_vectors[n * 3 + 2] = normal.z;
+            for (int face = 0; face < 3; face++) {
+                _vertices_normal_vectors[n * 9 + face * 3 + 0] = normal.x;
+                _vertices_normal_vectors[n * 9 + face * 3 + 1] = normal.y;
+                _vertices_normal_vectors[n * 9 + face * 3 + 2] = normal.z;
+            }
         }
         _normal_vector_updated = true;
     }
@@ -106,6 +102,10 @@ namespace data {
     int ObjectData::num_vertices()
     {
         return _num_vertices;
+    }
+    int ObjectData::num_extracted_vertices()
+    {
+        return _num_faces * 3;
     }
     int ObjectData::num_faces()
     {
@@ -133,7 +133,10 @@ namespace data {
     {
         return _vertices.get();
     }
-
+    GLfloat* ObjectData::extracted_vertices()
+    {
+        return _extracted_vertices.get();
+    }
     GLfloat* ObjectData::normal_vectors()
     {
         return _vertices_normal_vectors.get();
