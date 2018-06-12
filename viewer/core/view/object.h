@@ -18,6 +18,8 @@ namespace view {
 
     public:
         ObjectView(data::ObjectData* data, double x, double y, double width, double height);
+        void zoom_in();
+        void zoom_out();
         virtual void render(double aspect_ratio);
     };
 }

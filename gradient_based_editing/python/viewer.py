@@ -21,7 +21,7 @@ def main():
     axis_gradient = gme.viewer.ImageData(width, height, 1)
     axis_silhouette = gme.viewer.ImageData(width, height, 1)
     axis_target = gme.viewer.ImageData(width, height, 1)
-    axis_object = gme.viewer.MeshData(vertices, vertices.shape[0], faces, faces.shape[0])
+    axis_object = gme.viewer.ObjectData(vertices, vertices.shape[0], faces, faces.shape[0])
 
     figure.add(axis_sign, 0, 0, 0.25, 0.5)
     figure.add(axis_gradient, 0, 0.5, 0.25, 0.5)
@@ -104,6 +104,7 @@ def main():
         axis_silhouette.update(depth_map_image)
         axis_gradient.update(np.uint8(debug_grad_map[0]))
         axis_target.update(np.uint8(target_silhouette_batch[0]))
+        axis_object.update_vertices(vertices_batch[0])
 
         if window.closed():
             return

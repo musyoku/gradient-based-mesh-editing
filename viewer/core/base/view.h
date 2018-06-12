@@ -14,6 +14,7 @@ public:
     double y();
     double width();
     double height();
+    bool contains(double px, double py, int screen_width, int screen_height);
     virtual void render(double aspect_ratio);
 };
 }

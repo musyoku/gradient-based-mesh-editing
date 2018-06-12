@@ -68,5 +68,13 @@ namespace data {
         _faces_updated = false;
         return ret;
     }
+    GLfloat* ObjectData::vertices()
+    {
+        return _vertices.get();
+    }
+    GLuint* ObjectData::faces()
+    {
+        return _faces.get();
+    }
 }
 }

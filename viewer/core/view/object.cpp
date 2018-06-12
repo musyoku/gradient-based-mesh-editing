@@ -29,5 +29,13 @@ namespace view {
         }
         _renderer->render(aspect_ratio);
     }
+    void ObjectView::zoom_in()
+    {
+        _renderer->zoom_in();
+    }
+    void ObjectView::zoom_out()
+    {
+        _renderer->zoom_out();
+    }
 }
 }
