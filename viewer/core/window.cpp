@@ -7,7 +7,6 @@ Window::Window(Figure* figure)
     _figure = figure;
     _closed = false;
     _mouse = { 0, 0, false };
-    std::cout << &_mouse << std::endl;
 
     glfwSetErrorCallback([](int error, const char* description) {
         fprintf(stderr, "Error %d: %s\n", error, description);

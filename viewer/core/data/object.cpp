@@ -1,5 +1,6 @@
 #include "object.h"
 #include <glm/glm.hpp>
+#include <iostream>
 
 namespace viewer {
 namespace data {
@@ -10,8 +11,9 @@ namespace data {
         _vertices = std::make_unique<GLfloat[]>(num_vertices * 3);
         _faces = std::make_unique<GLuint[]>(num_faces * 3);
         _vertices_normal_vectors = std::make_unique<GLfloat[]>(num_vertices * 3);
-        update_vertices(vertices);
-        update_faces(faces);
+        _update_vertices(vertices);
+        _update_faces(faces);
+        _update_normal_vectors();
     }
     void ObjectData::_update_vertices(pybind11::array_t<GLfloat> vertices)
     {
@@ -64,7 +66,7 @@ namespace data {
             glm::vec3 vc = glm::vec3(_vertices[fc * 3 + 0], _vertices[fc * 3 + 1], _vertices[fc * 3 + 2]);
             glm::vec3 vba = vb - va;
             glm::vec3 vcb = vc - vb;
-            glm::vec3 normal = glm::normalize(vba * vcb);
+            glm::vec3 normal = glm::normalize(glm::cross(vba, vcb));
             _vertices_normal_vectors[fa * 3 + 0] += normal.x;
             _vertices_normal_vectors[fa * 3 + 1] += normal.y;
             _vertices_normal_vectors[fa * 3 + 2] += normal.z;

@@ -18,32 +18,32 @@ namespace renderer {
 in vec3 position;
 in vec3 normal_vector;
 uniform mat4 pvm;
-out vec3 power;
+out float power;
 void main(void)
 {
     gl_Position = pvm * vec4(position, 1.0);
-    // vec3 light_direction = vec3(0.0, 1.0, 0.0);
+    vec3 light_direction = vec3(0.0, -1.0, -1.0);
     // vec3 normal = normalize((vec4(normal_vector, 0.0) * pvm).xyz);
-    // float power = dot(normal, -normalize(light_direction));
-    // power = clamp(power, 0.0, 1.0);
-    power = clamp((normal_vector + 1.0) / 2.0, 0.0, 1.0);
+    power = dot(normal_vector, -normalize(light_direction));
+    power = clamp(power, 0.1, 1.0);
+    // power = clamp((normal_vector + 1.0) / 2.0, 0.0, 1.0);
 }
 )";
 
         const GLchar fragment_shader[] = R"(
 #version 410
-in vec3 power;
-out vec4 color;
+in float power;
+out vec4 frag_color;
 void main(){
-    color = vec4(power, 1.0);
+    frag_color = vec4(power * vec3(1.0), 1.0);
 }
 )";
 
         _program = opengl::create_program(vertex_shader, fragment_shader);
 
         _attribute_position = glGetAttribLocation(_program, "position");
-        _attribute_normal_vector = glGetAttribLocation(_program, "normal");
-        _uniform_mat = glGetUniformLocation(_program, "pvm");
+        _attribute_normal_vector = glGetAttribLocation(_program, "normal_vector");
+        _uniform_pvm = glGetUniformLocation(_program, "pvm");
 
         glGenVertexArrays(1, &_vao);
         glBindVertexArray(_vao);
@@ -64,6 +64,15 @@ void main(){
 
         update_faces(faces, num_faces);
         update_vertices(vertices, num_vertices);
+    }
+
+    ObjectRenderer::~ObjectRenderer()
+    {
+        glDeleteBuffers(1, &_vbo_faces);
+        glDeleteBuffers(1, &_vbo_normal_vectors);
+        glDeleteBuffers(1, &_vbo_uv);
+        glDeleteBuffers(1, &_vbo_vertices);
+        glDeleteVertexArrays(1, &_vao);
     }
     void ObjectRenderer::update_faces(GLuint* faces, int num_faces)
     {
@@ -98,7 +107,7 @@ void main(){
             100.0f);
 
         glm::mat4 pvm = projection_mat * _view_mat;
-        glUniformMatrix4fv(_uniform_mat, 1, GL_FALSE, &pvm[0][0]);
+        glUniformMatrix4fv(_uniform_pvm, 1, GL_FALSE, &pvm[0][0]);
 
         glDrawElements(GL_TRIANGLES, 3 * _num_faces, GL_UNSIGNED_INT, 0);
 

@@ -11,7 +11,7 @@ namespace renderer {
         GLuint _program;
         GLuint _attribute_position;
         GLuint _attribute_normal_vector;
-        GLuint _uniform_mat;
+        GLuint _uniform_pvm;
         GLuint _vao;
         GLuint _vbo_vertices;
         GLuint _vbo_normal_vectors;
@@ -23,6 +23,7 @@ namespace renderer {
 
     public:
         ObjectRenderer(GLfloat* vertices, int num_vertices, GLuint* faces, int num_faces);
+        ~ObjectRenderer();
         void update_faces(GLuint* faces, int num_faces);
         void update_vertices(GLfloat* vertices, int num_vertices);
         void update_normal_vectors(GLfloat* normal_vectors, int num_vertices);
