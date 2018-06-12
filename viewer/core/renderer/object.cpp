@@ -16,34 +16,49 @@ namespace renderer {
         const GLchar vertex_shader[] = R"(
 #version 410
 in vec3 position;
-uniform mat4 mat;
+in vec3 normal_vector;
+uniform mat4 pvm;
+out vec3 power;
 void main(void)
 {
-    gl_Position = mat * vec4(position, 1.0);
+    gl_Position = pvm * vec4(position, 1.0);
+    // vec3 light_direction = vec3(0.0, 1.0, 0.0);
+    // vec3 normal = normalize((vec4(normal_vector, 0.0) * pvm).xyz);
+    // float power = dot(normal, -normalize(light_direction));
+    // power = clamp(power, 0.0, 1.0);
+    power = clamp((normal_vector + 1.0) / 2.0, 0.0, 1.0);
 }
 )";
 
         const GLchar fragment_shader[] = R"(
 #version 410
+in vec3 power;
 out vec4 color;
 void main(){
-    color = vec4(0.0, 1.0, 1.0, 1.0);
+    color = vec4(power, 1.0);
 }
 )";
 
         _program = opengl::create_program(vertex_shader, fragment_shader);
 
         _attribute_position = glGetAttribLocation(_program, "position");
-        _uniform_mat = glGetUniformLocation(_program, "mat");
+        _attribute_normal_vector = glGetAttribLocation(_program, "normal");
+        _uniform_mat = glGetUniformLocation(_program, "pvm");
 
         glGenVertexArrays(1, &_vao);
         glBindVertexArray(_vao);
 
         glGenBuffers(1, &_vbo_faces);
+
         glGenBuffers(1, &_vbo_vertices);
         glBindBuffer(GL_ARRAY_BUFFER, _vbo_vertices);
         glVertexAttribPointer(_attribute_position, 3, GL_FLOAT, GL_FALSE, 0, 0);
         glEnableVertexAttribArray(_attribute_position);
+
+        glGenBuffers(1, &_vbo_normal_vectors);
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo_normal_vectors);
+        glVertexAttribPointer(_attribute_normal_vector, 3, GL_FLOAT, GL_FALSE, 0, 0);
+        glEnableVertexAttribArray(_attribute_normal_vector);
 
         glBindVertexArray(0);
 
@@ -56,13 +71,19 @@ void main(){
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vbo_faces);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, 3 * num_faces * sizeof(GLuint), faces, GL_STATIC_DRAW);
         glBindVertexArray(0);
-        _num_faces = num_faces;
     }
     void ObjectRenderer::update_vertices(GLfloat* vertices, int num_vertices)
     {
         glBindVertexArray(_vao);
         glBindBuffer(GL_ARRAY_BUFFER, _vbo_vertices);
         glBufferData(GL_ARRAY_BUFFER, 3 * num_vertices * sizeof(GLfloat), vertices, GL_STATIC_DRAW);
+        glBindVertexArray(0);
+    }
+    void ObjectRenderer::update_normal_vectors(GLfloat* normal_vectors, int num_vertices)
+    {
+        glBindVertexArray(_vao);
+        glBindBuffer(GL_ARRAY_BUFFER, _vbo_normal_vectors);
+        glBufferData(GL_ARRAY_BUFFER, 3 * num_vertices * sizeof(GLfloat), normal_vectors, GL_STATIC_DRAW);
         glBindVertexArray(0);
     }
     void ObjectRenderer::render(GLfloat aspect_ratio)
@@ -76,8 +97,8 @@ void main(){
             0.1f,
             100.0f);
 
-        glm::mat4 mat = projection_mat * _view_mat;
-        glUniformMatrix4fv(_uniform_mat, 1, GL_FALSE, &mat[0][0]);
+        glm::mat4 pvm = projection_mat * _view_mat;
+        glUniformMatrix4fv(_uniform_mat, 1, GL_FALSE, &pvm[0][0]);
 
         glDrawElements(GL_TRIANGLES, 3 * _num_faces, GL_UNSIGNED_INT, 0);
 

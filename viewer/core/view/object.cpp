@@ -19,6 +19,10 @@ namespace view {
     {
         _renderer->update_faces(_data->faces(), _data->num_faces());
     }
+    void ObjectView::_bind_normal_vectors()
+    {
+        _renderer->update_normal_vectors(_data->normal_vectors(), _data->num_vertices());
+    }
     void ObjectView::render(double aspect_ratio)
     {
         if (_data->vertices_updated()) {
@@ -26,6 +30,9 @@ namespace view {
         }
         if (_data->faces_updated()) {
             _bind_faces();
+        }
+        if (_data->normal_vector_updated()) {
+            _bind_normal_vectors();
         }
         _renderer->render(aspect_ratio);
     }

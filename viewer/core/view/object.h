@@ -15,6 +15,7 @@ namespace view {
         std::unique_ptr<renderer::ObjectRenderer> _renderer;
         void _bind_vertices();
         void _bind_faces();
+        void _bind_normal_vectors();
 
     public:
         ObjectView(data::ObjectData* data, double x, double y, double width, double height);
