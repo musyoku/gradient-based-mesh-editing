@@ -53,7 +53,7 @@ void Window::_run()
         double y = std::get<2>(frame);
         double width = std::get<3>(frame);
         double height = std::get<4>(frame);
-        _image_views.emplace_back(std::make_unique<view::ImageView>(data, x, y, width, height));
+        _images.emplace_back(std::make_unique<view::ImageView>(data, x, y, width, height));
     }
 
     while (!!glfwWindowShouldClose(_shared_window) == false) {
@@ -67,7 +67,7 @@ void Window::_run()
         // int window_width, window_height;
         // glfwGetWindowSize(_shared_window, &window_width, &window_height);
 
-        for (const auto& view : _image_views) {
+        for (const auto& view : _images) {
             int x = screen_width * view->x();
             int y = screen_height * view->y();
             int width = screen_width * view->width();

@@ -21,12 +21,13 @@ def main():
     axis_gradient = gme.viewer.ImageData(width, height, 1)
     axis_silhouette = gme.viewer.ImageData(width, height, 1)
     axis_target = gme.viewer.ImageData(width, height, 1)
-    axis_object = gme.viewer.MeshData(vertices.shape[0], faces.shape[0])
+    axis_object = gme.viewer.MeshData(vertices, vertices.shape[0], faces, faces.shape[0])
 
     figure.add(axis_sign, 0, 0, 0.25, 0.5)
     figure.add(axis_gradient, 0, 0.5, 0.25, 0.5)
     figure.add(axis_silhouette, 0.75, 0, 0.25, 0.5)
     figure.add(axis_target, 0.75, 0.5, 0.25, 0.5)
+    figure.add(axis_object, 0.25, 0, 0.5, 1)
 
     window = gme.viewer.Window(figure)
     window.show()

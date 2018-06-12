@@ -1,7 +1,5 @@
 #include "image.h"
 #include "../opengl.h"
-#include <glm/glm.hpp>
-#include <iostream>
 
 namespace viewer {
 namespace renderer {

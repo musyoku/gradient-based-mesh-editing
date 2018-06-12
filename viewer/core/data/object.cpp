@@ -1,15 +1,17 @@
-#include "mesh.h"
+#include "object.h"
 
 namespace viewer {
 namespace data {
-    MeshData::MeshData(int num_vertices, int num_faces)
+    ObjectData::ObjectData(pybind11::array_t<GLfloat> vertices, int num_vertices, pybind11::array_t<GLuint> faces, int num_faces)
     {
         _num_vertices = num_vertices;
         _num_faces = num_faces;
         _vertices = std::make_unique<GLfloat[]>(num_vertices * 3);
         _faces = std::make_unique<GLuint[]>(num_faces * 3);
+        update_vertices(vertices);
+        update_faces(faces);
     }
-    void MeshData::update_vertices(pybind11::array_t<GLfloat> vertices)
+    void ObjectData::update_vertices(pybind11::array_t<GLfloat> vertices)
     {
         auto size = vertices.size();
         if (size != _num_vertices * 3) {
@@ -25,9 +27,9 @@ namespace data {
                 _vertices[index] = ptr(n, p);
             }
         }
-        _updated = true;
+        _vertices_updated = true;
     }
-    void MeshData::update_faces(pybind11::array_t<GLuint> faces)
+    void ObjectData::update_faces(pybind11::array_t<GLuint> faces)
     {
         auto size = faces.size();
         if (size != _num_faces * 3) {
@@ -43,12 +45,27 @@ namespace data {
                 _faces[index] = ptr(n, p);
             }
         }
-        _updated = true;
+        _faces_updated = true;
     }
-    bool MeshData::updated()
+
+    int ObjectData::num_vertices()
     {
-        bool ret = _updated;
-        _updated = false;
+        return _num_vertices;
+    }
+    int ObjectData::num_faces()
+    {
+        return _num_faces;
+    }
+    bool ObjectData::vertices_updated()
+    {
+        bool ret = _vertices_updated;
+        _vertices_updated = false;
+        return ret;
+    }
+    bool ObjectData::faces_updated()
+    {
+        bool ret = _faces_updated;
+        _faces_updated = false;
         return ret;
     }
 }

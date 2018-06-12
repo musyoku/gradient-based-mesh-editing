@@ -17,7 +17,7 @@ namespace view {
 
     public:
         ImageView(data::ImageData* data, double x, double y, double width, double height);
-        void render(double aspect_ratio);
+        virtual void render(double aspect_ratio);
     };
 }
 }

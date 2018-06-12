@@ -1,4 +1,6 @@
 #pragma once
+#include "view/image.h"
+#include "view/object.h"
 #include "figure.h"
 #include <gl3w/gl3w.h>
 #include <glfw/glfw3.h>
@@ -14,7 +16,7 @@ protected:
     GLFWwindow* _window;
     GLFWwindow* _shared_window;
     Figure* _figure;
-    std::vector<std::unique_ptr<view::ImageView>> _image_views;
+    std::vector<std::unique_ptr<view::ImageView>> _images;
     bool _closed;
     void _run();
 
