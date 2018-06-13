@@ -6,24 +6,36 @@
 
 CPU・GPU両方で動きます。
 
-詳細な使い方は`python`と`js`ディレクトリのREADMEをお読みください。
-
 ## インストール
 
-**Cython**
+**pybind11**
 
-CPU版はC++で実装しているのでCythonでビルドする必要があります。
+CPU版はC++で実装しているのでビルドする必要があります。
 
-Cythonをインストールするには以下のコマンドを実行します。
+まず以下のコマンドでpybind11をインストールします。
 
 ```
-pip3 install cython --user
+pip3 install pybind11 --user
 ```
 
-**レンダラーのビルド**
+**ビルド**
 
 以下のコマンドで共有ライブラリを作ります。
 
 ```
-python3 setup.py build_ext -i
+cd gradient_based_editing
+make
 ```
+
+**ビューワ**
+
+可視化を行うにはビューワをビルドする必要があります。
+
+マルチスレッドでOpenGLを動かしているのでmacOSでは動きません。
+
+```
+cd viewer
+make
+```
+
+![preview](https://qiita-image-store.s3.amazonaws.com/0/109322/f7521073-33c1-c204-c1ae-6c40f0e70537.gif)
