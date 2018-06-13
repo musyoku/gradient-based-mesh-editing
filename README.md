@@ -38,4 +38,4 @@ cd viewer
 make
 ```
 
-![preview](https://qiita-image-store.s3.amazonaws.com/0/109322/f7521073-33c1-c204-c1ae-6c40f0e70537.gif)
+![preview](https://qiita-image-store.s3.amazonaws.com/0/109322/85b69fb6-c397-fcbc-dd9a-f0ce31728d09.gif)
