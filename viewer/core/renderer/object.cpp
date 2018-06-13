@@ -103,7 +103,6 @@ void main(){
     void ObjectRenderer::render(GLfloat aspect_ratio)
     {
         glUseProgram(_program);
-        glClearColor(0.9, 0.9, 0.9, 1.0);
         glBindVertexArray(_vao);
 
         glm::mat4 projection_mat = glm::perspective(

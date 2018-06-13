@@ -104,7 +104,6 @@ void main(){
     void ImageRenderer::render(GLfloat aspect_ratio)
     {
         glUseProgram(_program);
-        glClearColor(0.0, 0.0, 0.0, 1.0);
 
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, _texture_id);
