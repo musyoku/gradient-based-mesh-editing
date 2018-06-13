@@ -2,7 +2,7 @@ CXX = g++
 INCLUDE = `pkg-config --cflags glfw3`
 LDFLAGS = `pkg-config --static --libs glfw3` `python3 -m pybind11 --includes`
 FLAGS = -O3 -DNDEBUG -Wall -Wformat -march=native -shared -std=c++14 -fPIC
-SOURCES = 	./cpp/core/*.cpp
+SOURCES = ./cpp/core/*.cpp ./cpp/pybind/bind.cpp
 EXTENSION = `python3-config --extension-suffix`
 
 UNAME := $(shell uname -s)

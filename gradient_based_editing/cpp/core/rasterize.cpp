@@ -17,10 +17,10 @@ int to_image_coordinate(float p, int size)
 
 // 各画素ごとに最前面を特定する
 void forward_face_index_map(
-    pybind11::array_t<float> np_face_vertices,
-    pybind11::array_t<int> np_face_index_map,
-    pybind11::array_t<float> np_depth_map,
-    pybind11::array_t<int> np_silhouette_image)
+    py::array_t<float, py::array::c_style> np_face_vertices,
+    py::array_t<int, py::array::c_style> np_face_index_map,
+    py::array_t<float, py::array::c_style> np_depth_map,
+    py::array_t<int, py::array::c_style> np_silhouette_image)
 {
     if (np_face_vertices.ndim() != 4) {
         std::runtime_error("(np_face_vertices.ndim() != 4) -> false");
@@ -34,6 +34,7 @@ void forward_face_index_map(
     if (np_silhouette_image.ndim() != 3) {
         std::runtime_error("(np_silhouette_image.ndim() != 3) -> false");
     }
+
 
     int batch_size = np_face_vertices.shape(0);
     int num_faces = np_face_vertices.shape(1);
@@ -129,11 +130,11 @@ void compute_grad_y(
     int num_vertices,
     int target_batch_index,
     int target_face_index,
-    pybind11::array_t<int>& np_face_index_map,
-    pybind11::array_t<int>& np_pixel_map,
-    pybind11::array_t<float>& np_grad_vertices,
-    pybind11::array_t<float>& np_grad_silhouette,
-    pybind11::array_t<float>& np_debug_grad_map)
+    py::array_t<int, py::array::c_style>& np_face_index_map,
+    py::array_t<int, py::array::c_style>& np_pixel_map,
+    py::array_t<float, py::array::c_style>& np_grad_vertices,
+    py::array_t<float, py::array::c_style>& np_grad_silhouette,
+    py::array_t<float, py::array::c_style>& np_debug_grad_map)
 {
     auto face_index_map = np_face_index_map.mutable_unchecked<3>();
     auto pixel_map = np_pixel_map.mutable_unchecked<3>();
@@ -475,11 +476,11 @@ void compute_grad_x(
     int num_vertices,
     int target_batch_index,
     int target_face_index,
-    pybind11::array_t<int>& np_face_index_map,
-    pybind11::array_t<int>& np_pixel_map,
-    pybind11::array_t<float>& np_grad_vertices,
-    pybind11::array_t<float>& np_grad_silhouette,
-    pybind11::array_t<float>& np_debug_grad_map)
+    py::array_t<int, py::array::c_style>& np_face_index_map,
+    py::array_t<int, py::array::c_style>& np_pixel_map,
+    py::array_t<float, py::array::c_style>& np_grad_vertices,
+    py::array_t<float, py::array::c_style>& np_grad_silhouette,
+    py::array_t<float, py::array::c_style>& np_debug_grad_map)
 {
     auto face_index_map = np_face_index_map.mutable_unchecked<3>();
     auto pixel_map = np_pixel_map.mutable_unchecked<3>();
@@ -668,7 +669,7 @@ void compute_grad_x(
             int si_x_end = 0;
             int xi_s_edge = si_x_start;
             // 最初から面の内部の場合はスキップ
-            int face_index = face_index_map(target_face_index, yi_p, si_x_start);
+            int face_index = face_index_map(target_batch_index, yi_p, si_x_start);
             if (face_index == target_face_index) {
                 continue;
             }
@@ -828,11 +829,11 @@ void compute_grad(
     int num_vertices,
     int target_batch_index,
     int target_face_index,
-    pybind11::array_t<int>& np_face_index_map,
-    pybind11::array_t<int>& np_pixel_map,
-    pybind11::array_t<float>& np_grad_vertices,
-    pybind11::array_t<float>& np_grad_silhouette,
-    pybind11::array_t<float>& np_debug_grad_map)
+    py::array_t<int, py::array::c_style>& np_face_index_map,
+    py::array_t<int, py::array::c_style>& np_pixel_map,
+    py::array_t<float, py::array::c_style>& np_grad_vertices,
+    py::array_t<float, py::array::c_style>& np_grad_silhouette,
+    py::array_t<float, py::array::c_style>& np_debug_grad_map)
 {
     compute_grad_x(
         xf_a,
@@ -876,14 +877,14 @@ void compute_grad(
 
 // シルエットの誤差から各頂点の勾配を求める
 void backward_silhouette(
-    pybind11::array_t<int> np_faces,
-    pybind11::array_t<float> np_face_vertices,
-    pybind11::array_t<float> np_vertices,
-    pybind11::array_t<int> np_face_index_map,
-    pybind11::array_t<int> np_pixel_map,
-    pybind11::array_t<float> np_grad_vertices,
-    pybind11::array_t<float> np_grad_silhouette,
-    pybind11::array_t<float> np_debug_grad_map)
+    py::array_t<int, py::array::c_style> np_faces,
+    py::array_t<float, py::array::c_style> np_face_vertices,
+    py::array_t<float, py::array::c_style> np_vertices,
+    py::array_t<int, py::array::c_style> np_face_index_map,
+    py::array_t<int, py::array::c_style> np_pixel_map,
+    py::array_t<float, py::array::c_style> np_grad_vertices,
+    py::array_t<float, py::array::c_style> np_grad_silhouette,
+    py::array_t<float, py::array::c_style> np_debug_grad_map)
 {
     if (np_faces.ndim() != 3) {
         std::runtime_error("(np_faces.ndim() != 3) -> false");

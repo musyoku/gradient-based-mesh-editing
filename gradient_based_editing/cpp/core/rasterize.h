@@ -2,19 +2,20 @@
 #include <pybind11/numpy.h>
 
 namespace gme {
+namespace py = pybind11;
 void forward_face_index_map(
-    pybind11::array_t<float> np_faces_vertices,
-    pybind11::array_t<int> np_face_index_map,
-    pybind11::array_t<float> np_depth_map,
-    pybind11::array_t<int> np_silhouette_image);
+    py::array_t<float, py::array::c_style> np_faces_vertices,
+    py::array_t<int, py::array::c_style> np_face_index_map,
+    py::array_t<float, py::array::c_style> np_depth_map,
+    py::array_t<int, py::array::c_style> np_silhouette_image);
 
 void backward_silhouette(
-    pybind11::array_t<int> np_faces,
-    pybind11::array_t<float> np_face_vertices,
-    pybind11::array_t<float> np_vertices,
-    pybind11::array_t<int> np_face_index_map,
-    pybind11::array_t<int> np_pixel_map,
-    pybind11::array_t<float> np_grad_vertices,
-    pybind11::array_t<float> np_grad_silhouette,
-    pybind11::array_t<float> np_debug_grad_map);
+    py::array_t<int, py::array::c_style> np_faces,
+    py::array_t<float, py::array::c_style> np_face_vertices,
+    py::array_t<float, py::array::c_style> np_vertices,
+    py::array_t<int, py::array::c_style> np_face_index_map,
+    py::array_t<int, py::array::c_style> np_pixel_map,
+    py::array_t<float, py::array::c_style> np_grad_vertices,
+    py::array_t<float, py::array::c_style> np_grad_silhouette,
+    py::array_t<float, py::array::c_style> np_debug_grad_map);
 }
