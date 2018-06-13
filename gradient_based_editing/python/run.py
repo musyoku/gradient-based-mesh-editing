@@ -1,12 +1,12 @@
 import os, sys, argparse
 import math
 import numpy as np
-import gradient_based_editing as gm
+import gradient_based_editing as gme
 
 
 def main():
     # オブジェクトの読み込み
-    vertices, faces = gm.objects.load("objects/teapot.obj")
+    vertices, faces = gme.objects.load("objects/teapot.obj")
 
     # ミニバッチ化
     vertices_batch = vertices[None, ...]
@@ -14,12 +14,23 @@ def main():
 
     silhouette_size = (256, 256)
 
-    if args.use_browser:
-        # ブラウザのビューワを起動
-        # nodeのサーバーをあらかじめ起動しておかないと繋がらないので注意
-        browser = gm.browser.Silhouette(
-            8080, np.ascontiguousarray(vertices_batch[0]),
-            np.ascontiguousarray(faces_batch[0]), silhouette_size)
+    figure = gme.viewer.Figure()
+    width, height = silhouette_size
+
+    axis_sign = gme.viewer.ImageData(width, height, 1)
+    axis_gradient = gme.viewer.ImageData(width, height, 1)
+    axis_silhouette = gme.viewer.ImageData(width, height, 1)
+    axis_target = gme.viewer.ImageData(width, height, 1)
+    axis_object = gme.viewer.ObjectData(vertices, vertices.shape[0], faces, faces.shape[0])
+
+    figure.add(axis_sign, 0, 0, 0.25, 0.5)
+    figure.add(axis_gradient, 0, 0.5, 0.25, 0.5)
+    figure.add(axis_silhouette, 0.75, 0, 0.25, 0.5)
+    figure.add(axis_target, 0.75, 0.5, 0.25, 0.5)
+    figure.add(axis_object, 0.25, 0, 0.5, 1)
+
+    window = gme.viewer.Window(figure)
+    window.show()
 
     # オブジェクトを適当に回転させる
     angle_x = np.random.randint(-180, 180)
@@ -28,21 +39,21 @@ def main():
     angle_x = -30
     angle_y = -45
     angle_z = 0
-    vertices_batch = gm.vertices.rotate_x(vertices_batch, angle_x)
-    vertices_batch = gm.vertices.rotate_y(vertices_batch, angle_y)
-    vertices_batch = gm.vertices.rotate_z(vertices_batch, angle_z)
+    vertices_batch = gme.vertices.rotate_x(vertices_batch, angle_x)
+    vertices_batch = gme.vertices.rotate_y(vertices_batch, angle_y)
+    vertices_batch = gme.vertices.rotate_z(vertices_batch, angle_z)
 
     for _ in range(10000):
         # カメラ座標系に変換
-        perspective_vertices_batch = gm.vertices.transform_to_camera_coordinate_system(
+        perspective_vertices_batch = gme.vertices.transform_to_camera_coordinate_system(
             vertices_batch, distance_from_object=2, angle_x=0, angle_y=0)
 
         # 透視投影
-        perspective_vertices_batch = gm.vertices.project_perspective(
+        perspective_vertices_batch = gme.vertices.project_perspective(
             perspective_vertices_batch, viewing_angle=45, z_max=5, z_min=0)
 
         #################
-        face_vertices_batch = gm.vertices.convert_to_face_representation(
+        face_vertices_batch = gme.vertices.convert_to_face_representation(
             perspective_vertices_batch, faces_batch)
         # print(face_vertices_batch.shape)
         batch_size = face_vertices_batch.shape[0]
@@ -52,7 +63,7 @@ def main():
             (batch_size, ) + silhouette_size, dtype=np.float32)
         object_silhouette_batch = np.zeros(
             (batch_size, ) + silhouette_size, dtype=np.int32)
-        gm.rasterizer.forward_face_index_map_cpu(
+        gme.rasterizer.forward_face_index_map_cpu(
             face_vertices_batch, face_index_map_batch, depth_map,
             object_silhouette_batch)
         depth_map_image = np.ascontiguousarray(
@@ -73,7 +84,7 @@ def main():
 
         debug_grad_map = np.zeros_like(
             object_silhouette_batch, dtype=np.float32)
-        gm.rasterizer.backward_silhouette_cpu(
+        gme.rasterizer.backward_silhouette_cpu(
             faces_batch, face_vertices_batch, perspective_vertices_batch,
             face_index_map_batch, object_silhouette_batch, grad_vertices_batch,
             grad_silhouette_batch, debug_grad_map)
@@ -88,28 +99,17 @@ def main():
         grad_image[grad_image < 0] = 64
         #################
 
-        # print(faces_batch.size)
-        # print(face_vertices_batch.size)
-        # print(perspective_vertices_batch.size)
+        axis_sign.update(np.uint8(grad_image))
+        axis_silhouette.update(depth_map_image)
+        axis_gradient.update(np.uint8(debug_grad_map[0]))
+        axis_target.update(np.uint8(target_silhouette_batch[0]))
+        axis_object.update_vertices(vertices_batch[0])
 
-        # print(face_index_map_batch.size)
-        # print(object_silhouette_batch.size)
-
-        # print(grad_vertices_batch.size)
-        # print(grad_silhouette_batch.size)
-        # print(debug_grad_map.size)
-
-        if args.use_browser:
-            browser.update_top_left_image(np.uint8(grad_image))
-            browser.update_bottom_left_image(np.uint8(debug_grad_map[0]))
-            browser.update_top_right_image(depth_map_image)
-            browser.update_bottom_right_image(
-                np.uint8(target_silhouette_batch[0]))
-            browser.update_object(np.ascontiguousarray(vertices_batch[0]))
+        if window.closed():
+            return
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--use-browser", "-browser", action="store_true")
     args = parser.parse_args()
     main()
