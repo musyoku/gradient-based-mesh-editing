@@ -4,7 +4,10 @@
 
 [Neural 3D Mesh Renderer](https://arxiv.org/abs/1711.07566)で提案されたGradient-based mesh editingのC++/CUDA実装です。
 
-CPU・GPU両方で動きます。
+**Todo**
+
+- [x] 誤差逆伝播の実装（CPU）
+- [ ] 誤差逆伝播の実装（GPU）
 
 ## インストール
 
