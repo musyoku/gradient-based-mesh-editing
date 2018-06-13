@@ -8,7 +8,8 @@ SOURCES = 	./external/gl3w/*.c \
 			./core/data/*.cpp \
 			./core/renderer/*.cpp \
 			./core/*.cpp \
-			./pybind/*.cpp \
+			./pybind/*.cpp
+EXTENSION = `python3-config --extension-suffix`
 
 UNAME := $(shell uname -s)
 ifeq ($(UNAME), Linux)
@@ -19,4 +20,4 @@ ifeq ($(UNAME), Darwin)
 endif
 
 make: 
-	$(CXX) $(FLAGS) $(INCLUDE) $(SOURCES) $(LDFLAGS) -o ../gradient_based_editing/python/gradient_based_editing/viewer.so
+	$(CXX) $(FLAGS) $(INCLUDE) $(SOURCES) $(LDFLAGS) -o ../gradient_based_editing/python/gradient_based_editing/viewer$(EXTENSION)

@@ -19,8 +19,5 @@
 !vertices
 
 # ignore
-js/node_modules
-js/.next
-js/package-lock.json
 .vscode
 build
